@@ -6,6 +6,7 @@
     "start": "node dist/server/",
     "dev": "vite",
     "dev-node": "tsx watch src/server",
+    "dev-all": "concurrently \"npm run dev\" \"npm run dev-node\"",
     "build": "tsc && vite build && tsc -p tsconfig.server.json",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -23,6 +24,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "concurrently": "^8.2.1",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
