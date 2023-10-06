@@ -1,36 +1,33 @@
-import { useState } from "react";
-import "./App.css";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AppContextProvider } from "./client/AppContext";
+import HomePage from "./client/Components/Pages/HomePage";
+import HomePageCreatingRoomId from "./client/Components/Pages/HomePageCreatingRoomId";
+import HostPage from "./client/PhaserPages/HostPage";
+import PlayerPage from "./client/PhaserPages/PlayerPage";
+import PlayerPageCreatingUserId from "./client/PhaserPages/PlayerPageCreatingUserId";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+export default function App() {
   return (
-    <>
-      <div>
-        <h1>HI</h1>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <AppContextProvider>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<HomePageCreatingRoomId />} />
+            <Route path="/room/:roomId" element={<HomePage />} />
+
+            <Route
+              path="/room/:roomId/player"
+              element={<PlayerPageCreatingUserId />}
+            />
+            <Route
+              path="/room/:roomId/player/:userId"
+              element={<PlayerPage />}
+            />
+
+            <Route path="/host/:roomId/:game" element={<HostPage />} />
+          </Routes>
+        </BrowserRouter>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </AppContextProvider>
   );
 }
-
-export default App;
