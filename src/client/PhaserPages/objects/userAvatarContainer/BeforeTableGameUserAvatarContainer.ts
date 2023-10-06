@@ -1,5 +1,5 @@
-import { User } from 'api';
-import { PlayerBeforeTableGameData } from 'api/src/data/datas/BeforeTableGameData';
+import { User } from "../../../../shared/Types";
+import { PlayerBeforeTableGameData } from "../../../../shared/data/datas/BeforeTableGameData";
 import UserAvatarContainer from "../UserAvatarContainer";
 
 export class BeforeTableGameUserAvatarContainer extends UserAvatarContainer {

@@ -1,4 +1,4 @@
-import { RoomData } from "api";
+import { RoomData } from "../../../shared/Types";
 import socket from "../../SocketConnection";
 import { persistentData } from "../objects/PersistantData";
 import { findMyUser, getScreenDimensions, loadIfSpriteSheetNotLoaded, makeMyUserAvatarInCenterOfPlayerScreen } from "../objects/Tools";

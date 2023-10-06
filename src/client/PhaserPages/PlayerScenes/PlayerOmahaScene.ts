@@ -22,7 +22,7 @@ export default class PlayerOmahaScene extends PlayerScene {
   updateFpsText() {
   }
 
-  update() {
+  update(time: number, delta: number) {
     this.updateFpsText();
   }
 }

@@ -1,4 +1,4 @@
-import { MainMenuGameData, PlayerMainMenuData } from "api/src/data/datas/MainMenuData";
+import { MainMenuGameData, PlayerMainMenuData } from "../../../../shared/data/datas/MainMenuData";
 import MenuButton from "../../objects/MenuButton";
 import { persistentData } from "../../objects/PersistantData";
 import { getScreenDimensions } from "../../objects/Tools";
@@ -49,7 +49,7 @@ export default class PlayerMenu extends PlayerDataHandler<PlayerMainMenuData, Ma
         return playerData;
     }
 
-    override onPlayerDataReceived(playerData: Partial<PlayerMainMenuData>, gameData: Partial<MainMenuGameData> | null): void {
+    override onPlayerDataReceived(playerData: Partial<PlayerMainMenuData>): void {
         if (!playerData) return;
         if (playerData === undefined) return;
 
@@ -62,7 +62,7 @@ export default class PlayerMenu extends PlayerDataHandler<PlayerMainMenuData, Ma
         return gameData;
     }
 
-    override onGameDataReceived(gameData: Partial<MainMenuGameData>, playerData: Partial<PlayerMainMenuData> | null): void {
+    override onGameDataReceived(gameData: Partial<MainMenuGameData>): void {
         this.updateMainMenuPosition(gameData);
     }
 

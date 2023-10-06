@@ -1,4 +1,4 @@
-import { GameData, PlayerData } from "api/src/data/Data";
+import { GameData, PlayerData } from "../../../../shared/data/Data";
 import { HostDataHandlerBase } from "./HostDataHandlerBase";
 
 export abstract class HostDataHandler<PlayerDataType extends PlayerData, GameDataType extends GameData>

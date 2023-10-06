@@ -1,14 +1,17 @@
 import { List, ListItem } from "@mui/material";
-import { MainMenuGameData } from "api/src/data/datas/MainMenuData";
-import { gamesList } from "api/src/gamesList";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Textfit } from "../../Textfit";
+import { MainMenuGameData } from "../../../shared/data/datas/MainMenuData";
+import { gamesList } from "../../../shared/gamesList";
 import { palletColors } from "../../Palettes";
 import socket from "../../SocketConnection";
+import { Textfit } from "../../Textfit";
+
+type GameListMenuEventDetail = {
+  show: boolean;
+};
 
 export default function PlayerGamesListMenu() {
-  const { roomId, userId } = useParams();
+  // const { roomId, userId } = useParams();
 
   // visible state bool
   const [visible, setVisible] = useState(false);
@@ -30,13 +33,19 @@ export default function PlayerGamesListMenu() {
 
   // add event listener to detect if the window should be visible
   useEffect(() => {
-    const showGamesListMenu = (e: any) => {
+    const showGamesListMenu = (e: CustomEvent<GameListMenuEventDetail>) => {
       setVisible(e.detail.show);
       // scroll to selected game
     };
-    window.addEventListener("showGamesListMenu", showGamesListMenu);
+    window.addEventListener(
+      "showGamesListMenu",
+      showGamesListMenu as EventListener
+    );
     return () => {
-      window.removeEventListener("showGamesListMenu", showGamesListMenu);
+      window.removeEventListener(
+        "showGamesListMenu",
+        showGamesListMenu as EventListener
+      );
     };
   }, []);
 
@@ -65,8 +74,7 @@ export default function PlayerGamesListMenu() {
         backgroundColor: palletColors.color5,
         borderRadius: "20px",
         zIndex: 100,
-      }}
-    >
+      }}>
       {/* Show the current game being selected */}
       <div
         style={{
@@ -75,8 +83,7 @@ export default function PlayerGamesListMenu() {
           left: "0",
           width: "100%",
           height: "20%",
-        }}
-      >
+        }}>
         {/* Add back button */}
         <button
           onClick={() => {
@@ -99,16 +106,14 @@ export default function PlayerGamesListMenu() {
             borderRadius: "20px",
             // show pointer when hovering
             cursor: "pointer",
-          }}
-        >
+          }}>
           <Textfit
             style={{
               fontWeight: "bold",
               height: "80%",
               width: "100%",
               textAlign: "center",
-            }}
-          >
+            }}>
             Back
           </Textfit>
         </button>
@@ -122,14 +127,12 @@ export default function PlayerGamesListMenu() {
                 width: "70%",
                 height: "20%",
                 color: palletColors.color1,
-              }}
-            >
+              }}>
               <Textfit
                 style={{
                   height: "100%",
                   width: "100%",
-                }}
-              >
+                }}>
                 {selectedGame.displayName}
               </Textfit>
             </div>
@@ -141,14 +144,12 @@ export default function PlayerGamesListMenu() {
                 width: "80%",
                 height: "60%",
                 color: palletColors.color1,
-              }}
-            >
+              }}>
               <Textfit
                 style={{
                   height: "100%",
                   width: "100%",
-                }}
-              >
+                }}>
                 {selectedGame.description}
               </Textfit>
             </div>
@@ -172,14 +173,12 @@ export default function PlayerGamesListMenu() {
                 fontWeight: "bold",
                 // show pointer when hovering
                 cursor: "pointer",
-              }}
-            >
+              }}>
               <Textfit
                 style={{
                   height: "100%",
                   width: "100%",
-                }}
-              >
+                }}>
                 Play
               </Textfit>
             </button>
@@ -193,8 +192,7 @@ export default function PlayerGamesListMenu() {
               width: "80%",
               height: "50%",
               color: palletColors.color1,
-            }}
-          >
+            }}>
             <Textfit>Choose a game</Textfit>
           </div>
         )}
@@ -215,13 +213,12 @@ export default function PlayerGamesListMenu() {
           justifyContent: "around",
           backgroundColor: palletColors.color4,
           borderRadius: "10px",
-        }}
-      >
+        }}>
         {gamesList.map((game) => {
           if (game.name === selectedGameNameName) {
             return (
               <ListItem
-                onClick={(e: any) => {
+                onClick={(e: React.MouseEvent<HTMLLIElement>) => {
                   e.preventDefault();
                   setSelectedGame(game.name);
                   const gameData: Partial<MainMenuGameData> = {};
@@ -237,8 +234,7 @@ export default function PlayerGamesListMenu() {
                   // show clickable
                   cursor: "pointer",
                   backgroundColor: palletColors.color3,
-                }}
-              >
+                }}>
                 <Textfit
                   style={{
                     width: "100%",
@@ -247,8 +243,7 @@ export default function PlayerGamesListMenu() {
                     // make text not selectable
                     userSelect: "none",
                     backgroundColor: palletColors.color3,
-                  }}
-                >
+                  }}>
                   {game.displayName}
                 </Textfit>
               </ListItem>
@@ -256,7 +251,7 @@ export default function PlayerGamesListMenu() {
           }
           return (
             <ListItem
-              onClick={(e: any) => {
+              onClick={(e: React.MouseEvent<HTMLLIElement>) => {
                 e.preventDefault();
                 setSelectedGame(game.name);
                 const gameData: Partial<MainMenuGameData> = {};
@@ -272,8 +267,7 @@ export default function PlayerGamesListMenu() {
                 margin: "1%",
                 // show clickable
                 cursor: "pointer",
-              }}
-            >
+              }}>
               <Textfit
                 style={{
                   width: "100%",
@@ -282,8 +276,7 @@ export default function PlayerGamesListMenu() {
                   backgroundColor: palletColors.color1,
                   // make text not selectable
                   userSelect: "none",
-                }}
-              >
+                }}>
                 {game.displayName}
               </Textfit>
             </ListItem>

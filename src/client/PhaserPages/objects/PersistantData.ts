@@ -1,4 +1,4 @@
-import { RoomData } from "api";
+import { RoomData } from "../../../shared/Types";
 
 // create class that stores persistent data between scenes
 export class PersistantData {

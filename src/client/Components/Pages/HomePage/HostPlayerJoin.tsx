@@ -1,14 +1,14 @@
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import { Game, RoomData, UserAvatar } from "api";
 import { useContext, useEffect } from "react";
 import QRCode from "react-qr-code";
 import { useParams } from "react-router-dom";
-import { Textfit } from "../../../Textfit";
+import { Game, RoomData, UserAvatar } from "../../../../shared/Types";
 import { AppContext } from "../../../AppContext";
 import { palletColors } from "../../../Palettes";
-import { avatarImages } from "../../../PhaserPages/objects/avatarImages.generated";
 import { persistentData } from "../../../PhaserPages/objects/PersistantData";
+import { avatarImages } from "../../../PhaserPages/objects/avatarImages.generated";
+import { Textfit } from "../../../Textfit";
 import { useHostConnections } from "../../../WebRTC/HostConnections";
 
 export default function HostPlayerJoin() {

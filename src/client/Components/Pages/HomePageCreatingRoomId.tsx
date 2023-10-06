@@ -1,7 +1,7 @@
 import { LinearProgress } from "@mui/material";
-import { NewRoomId } from "api";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { NewRoomId } from "../../../shared/Types";
 import { AppContext } from "../../AppContext";
 
 export default function HomePageCreatingRoomId() {

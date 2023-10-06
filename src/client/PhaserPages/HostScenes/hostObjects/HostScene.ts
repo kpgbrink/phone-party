@@ -1,5 +1,5 @@
-import { Game, RoomData } from "api";
-import { getGameFromName } from "api/src/gamesList";
+import { Game, RoomData } from "../../../../shared/Types";
+import { getGameFromName } from "../../../../shared/gamesList";
 import socket from "../../../SocketConnection";
 import BaseScene from "../../objects/BaseScene";
 import { persistentData } from "../../objects/PersistantData";
@@ -74,7 +74,7 @@ export default abstract class HostScene extends BaseScene {
         });
     }
 
-    update(time: number, delta: number) {
+    override update(time: number, delta: number) {
     }
 
     goToNextScene() {

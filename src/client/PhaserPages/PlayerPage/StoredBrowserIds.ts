@@ -1,4 +1,4 @@
-import { StoredBrowserIds } from "api";
+import { StoredBrowserIds } from "../../../shared/Types";
 
 
 export const storeIds = (socketId: string, userId: string) => {

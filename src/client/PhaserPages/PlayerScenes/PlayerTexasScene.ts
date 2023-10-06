@@ -18,6 +18,6 @@ export default class PlayerTexasScene extends PlayerScene {
             .setOrigin(1, 0);
     }
 
-    update() {
+    update(time: number, delta: number) {
     }
 }

@@ -1,6 +1,6 @@
-import { Game } from "api";
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Game } from "../../shared/Types";
 import { AppContext } from "../AppContext";
 import HostBeforeTableGameScene from "./HostScenes/HostBeforeTableGameScene";
 import HostBeginScene from "./HostScenes/HostBeginScene";

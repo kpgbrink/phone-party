@@ -1,9 +1,9 @@
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   MainMenuGameData,
   PlayerMainMenuData,
-} from "api/src/data/datas/MainMenuData";
-import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+} from "../../../shared/data/datas/MainMenuData";
 import { AppContext } from "../../AppContext";
 import { palletColors } from "../../Palettes";
 import { HostDataHandler } from "../../PhaserPages/HostScenes/hostObjects/HostDataHandler";
@@ -80,8 +80,7 @@ export default function HomePage() {
         id="homePage"
         style={{
           backgroundColor: palletColors.color5,
-        }}
-      >
+        }}>
         {mainMenuData.mainMenuPosition === 0 && <PlayerJoin />}
         {mainMenuData.mainMenuPosition === 1 && (
           <HostPlayerChooseGame mainMenuData={mainMenuData} />

@@ -22,7 +22,7 @@ export default class OmahaHostScene extends HostScene {
     updateFpsText() {
     }
 
-    update() {
+    update(time: number, delta: number) {
         this.updateFpsText();
     }
 }

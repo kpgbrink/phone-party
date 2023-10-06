@@ -1,4 +1,4 @@
-import { RoomData, User } from "api";
+import { RoomData, User } from "../../../../shared/Types";
 import { persistentData } from "../../objects/PersistantData";
 import { getScreenCenter, randomNumberBetween } from "../../objects/Tools";
 import UserAvatarContainer from "../../objects/UserAvatarContainer";

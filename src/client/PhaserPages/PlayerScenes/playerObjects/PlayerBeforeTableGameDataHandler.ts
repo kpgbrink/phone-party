@@ -1,5 +1,5 @@
-import { BeforeTableGameData, PlayerBeforeTableGameData } from "api/src/data/datas/BeforeTableGameData";
-import { MainMenuGameData } from "api/src/data/datas/MainMenuData";
+import { BeforeTableGameData, PlayerBeforeTableGameData } from "../../../../shared/data/datas/BeforeTableGameData";
+import { MainMenuGameData } from "../../../../shared/data/datas/MainMenuData";
 import PlayerBeforeTableGameStart from "../PlayerBeforeTableGameStart";
 import { PlayerDataHandler } from "./PlayerDataHandler";
 
@@ -28,7 +28,7 @@ export default class PlayerBeforeTableGameStartDataHandler extends PlayerDataHan
         return playerData;
     }
 
-    override onPlayerDataReceived(playerData: Partial<PlayerBeforeTableGameData>, gameData: Partial<MainMenuGameData> | null): void {
+    override onPlayerDataReceived(playerData: Partial<PlayerBeforeTableGameData>): void {
         if (!playerData) return;
         if (playerData === undefined) return;
         // handle check mark changing
@@ -46,7 +46,7 @@ export default class PlayerBeforeTableGameStartDataHandler extends PlayerDataHan
         return gameData;
     }
 
-    override onGameDataReceived(gameData: Partial<MainMenuGameData>, playerData: Partial<PlayerBeforeTableGameData> | null): void {
+    override onGameDataReceived(): void {
     }
 
     update(time: number, delta: number) {

@@ -1,8 +1,8 @@
-import { GameData, PlayerData } from "api/src/data/Data";
+import { GameData, PlayerData } from "../../../../shared/data/Data";
 import { persistentData } from "../../objects/PersistantData";
 import { HostDataHandler } from "./HostDataHandler";
-import { HostGameState } from "./hostGame/states/HostGameState";
 import HostScene from "./HostScene";
+import { HostGameState } from "./hostGame/states/HostGameState";
 
 export abstract class HostGame<PlayerDataType extends PlayerData, GameDataType extends GameData>
     extends HostDataHandler<PlayerDataType, GameDataType> {
@@ -53,7 +53,7 @@ export abstract class HostGame<PlayerDataType extends PlayerData, GameDataType e
     }
     // --- end data ---
     update(time: number, delta: number) {
-        var newState = this.currentState?.update(time, delta) || null;
+        const newState = this.currentState?.update(time, delta) || null;
         this.changeState(newState);
     }
 

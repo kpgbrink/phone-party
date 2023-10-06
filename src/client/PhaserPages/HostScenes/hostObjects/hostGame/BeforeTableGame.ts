@@ -1,4 +1,4 @@
-import { BeforeTableGameData, PlayerBeforeTableGameData } from "api/src/data/datas/BeforeTableGameData";
+import { BeforeTableGameData, PlayerBeforeTableGameData } from "../../../../../shared/data/datas/BeforeTableGameData";
 import socket from "../../../../SocketConnection";
 import GameTable from "../../../objects/GameTable";
 import { persistentData } from "../../../objects/PersistantData";

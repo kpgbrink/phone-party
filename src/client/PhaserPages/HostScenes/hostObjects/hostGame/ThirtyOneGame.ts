@@ -1,4 +1,4 @@
-import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "api/src/data/datas/cardHandDatas/ThirtyOneCardHandData";
+import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import CardContainer from "../../../objects/items/CardContainer";
 import { loadIfImageNotLoaded, Transform, transformRelativeToScreenCenter } from "../../../objects/Tools";
 import { ThirtyOneUserAvatarContainer } from "../../../objects/userAvatarContainer/cardGameUserAvatarContainer/ThirtyOneUserAvatarContainer";

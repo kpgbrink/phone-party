@@ -1,4 +1,4 @@
-import { ThirtyOnePlayerCardHandData } from "api/src/data/datas/cardHandDatas/ThirtyOneCardHandData";
+import { ThirtyOnePlayerCardHandData } from "../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import GenericItemContainer from "../../items/GenericItemContainer";
 import { DegreesToRadians, getScreenCenter, randomizeTransform, transformFromObject, TransformRandomizer } from "../../Tools";
 import { CardGameUserAvatarContainer } from "../CardGameUserAvatarContainer";

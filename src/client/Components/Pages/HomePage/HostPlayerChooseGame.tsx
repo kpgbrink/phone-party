@@ -1,15 +1,15 @@
 import { List, ListItem } from "@mui/material";
-import { Game, RoomData, UserAvatar } from "api";
-import { MainMenuGameData } from "api/src/data/datas/MainMenuData";
-import { gamesList } from "api/src/gamesList";
 import { useContext, useEffect, useLayoutEffect, useRef } from "react";
 import QRCode from "react-qr-code";
 import { useParams } from "react-router-dom";
-import { Textfit } from "../../../Textfit";
+import { Game, RoomData, UserAvatar } from "../../../../shared/Types";
+import { MainMenuGameData } from "../../../../shared/data/datas/MainMenuData";
+import { gamesList } from "../../../../shared/gamesList";
 import { AppContext } from "../../../AppContext";
 import { palletColors } from "../../../Palettes";
-import { avatarImages } from "../../../PhaserPages/objects/avatarImages.generated";
 import { persistentData } from "../../../PhaserPages/objects/PersistantData";
+import { avatarImages } from "../../../PhaserPages/objects/avatarImages.generated";
+import { Textfit } from "../../../Textfit";
 import { useHostConnections } from "../../../WebRTC/HostConnections";
 
 type Props = {

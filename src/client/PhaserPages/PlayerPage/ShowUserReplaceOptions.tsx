@@ -6,9 +6,9 @@ import {
   List,
   ListItem,
 } from "@mui/material";
-import { RoomData } from "api";
 import { useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
+import { RoomData } from "../../../shared/Types";
 import socket from "../../SocketConnection";
 
 export default function ShowUserReplaceOptions() {
@@ -59,8 +59,7 @@ export default function ShowUserReplaceOptions() {
                   to={`/room/${roomId}/player/${userId}`}
                   onClick={() => {
                     setOpen(false);
-                  }}
-                >
+                  }}>
                   {roomData?.users.find((user) => user.id === userId)?.name ??
                     userId}
                 </NavLink>

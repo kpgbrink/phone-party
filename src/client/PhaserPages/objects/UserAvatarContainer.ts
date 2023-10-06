@@ -1,9 +1,9 @@
-import { RoomData, User, UserAvatar } from "api";
 import Phaser from "phaser";
+import { RoomData, User, UserAvatar } from "../../../shared/Types";
 import socket from "../../SocketConnection";
-import { avatarImages } from "./avatarImages.generated";
 import { persistentData } from "./PersistantData";
 import { loadIfImageNotLoadedAndUserAvatarHasIt, randomIndex } from "./Tools";
+import { avatarImages } from "./avatarImages.generated";
 
 export const playerFolder = 'assets/player/';
 

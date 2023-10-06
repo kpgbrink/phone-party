@@ -1,5 +1,5 @@
-import { RoomData } from "api";
-import { getGameFromName } from "api/src/gamesList";
+import { RoomData } from "../../../shared/Types";
+import { getGameFromName } from "../../../shared/gamesList";
 import socket from "../../SocketConnection";
 import HostScene from "./hostObjects/HostScene";
 

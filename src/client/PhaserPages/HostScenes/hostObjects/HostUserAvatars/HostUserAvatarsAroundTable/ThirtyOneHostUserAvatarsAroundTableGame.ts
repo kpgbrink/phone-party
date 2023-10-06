@@ -1,4 +1,4 @@
-import { User } from "api";
+import { User } from "../../../../../../shared/Types";
 import { ThirtyOneUserAvatarContainer } from "../../../../objects/userAvatarContainer/cardGameUserAvatarContainer/ThirtyOneUserAvatarContainer";
 import { HostUserAvatarsAroundTableGame } from "./HostUserAvatarsAroundTableGame";
 

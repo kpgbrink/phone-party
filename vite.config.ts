@@ -4,5 +4,8 @@ import { defineConfig } from 'vite'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  server: { proxy: { "/api": "http://localhost:3002" } }
+  server: { proxy: { "/api": "http://localhost:3002" } },
+  define: {
+    global: {}
+  },
 })

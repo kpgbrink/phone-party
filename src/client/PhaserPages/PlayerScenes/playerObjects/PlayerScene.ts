@@ -1,5 +1,5 @@
-import { RoomData } from "api";
 import Phaser from "phaser";
+import { RoomData } from "../../../../shared/Types";
 import { palletColors } from "../../../Palettes";
 import socket from "../../../SocketConnection";
 import { startListeningForClientConnections } from "../../../WebRTC/ClientConnection";
