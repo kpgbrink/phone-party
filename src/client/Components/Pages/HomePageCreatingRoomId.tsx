@@ -11,7 +11,7 @@ export default function HomePageCreatingRoomId() {
   useEffect(() => {
     const abortController = new AbortController();
     const fetchData = async () => {
-      const response = await fetch("/getNewRoomId", {
+      const response = await fetch("/api/getNewRoomId", {
         signal: abortController.signal,
       });
       const data: NewRoomId = await response.json();
