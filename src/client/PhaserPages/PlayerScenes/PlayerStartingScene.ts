@@ -56,12 +56,12 @@ export default class PlayerStartingScene extends PlayerScene {
   }
 
   setUpNameDisplayAndInput() {
-    var screenDimensions = getScreenDimensions(this);
+    const screenDimensions = getScreenDimensions(this);
     this.nameFormElement = this.add.dom(screenDimensions.width / 2, 650).createFromCache('nameform').setOrigin(0.5);
     if (!this.nameFormElement) return;
     const nameSend = () => {
       if (!this.nameFormElement) return;
-      var inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
+      const inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
       if (inputText.value === '') return;
       // remove trim
       inputText.value = inputText.value.trim();
@@ -86,7 +86,7 @@ export default class PlayerStartingScene extends PlayerScene {
 
     this.input.keyboard?.on('keyup', (event: any) => {
       if (!this.nameFormElement) return;
-      var inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
+      const inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
       // only if key not enter
       if (event.keyCode !== 13) {
         this.setStyleForNameInputNotSent();
@@ -112,7 +112,7 @@ export default class PlayerStartingScene extends PlayerScene {
 
   handleNameStyleChange() {
     if (!this.nameFormElement) return;
-    var inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
+    const inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
     if (!inputText) return;
     if (this.checkIfNameInInputIsSameAsCurrentName()) {
       // show a different style to the input box
@@ -127,7 +127,7 @@ export default class PlayerStartingScene extends PlayerScene {
 
   setStyleForNameInputNotSent() {
     if (!this.nameFormElement) return;
-    var inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
+    const inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
     this.nameFormElement.setVisible(true);
     if (!inputText) return;
     inputText.style.color = 'black';
@@ -137,7 +137,7 @@ export default class PlayerStartingScene extends PlayerScene {
 
   checkIfNameInInputIsSameAsCurrentName() {
     if (!this.nameFormElement) return;
-    var inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
+    const inputText = this.nameFormElement.getChildByName('nameField') as HTMLInputElement;
     if (!inputText) return;
     if (!persistentData.roomData) return;
     const myUser = findMyUser(persistentData.roomData);

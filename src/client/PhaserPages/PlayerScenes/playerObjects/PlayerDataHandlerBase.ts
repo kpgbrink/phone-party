@@ -1,4 +1,4 @@
-import { GameData, PlayerData } from "api/src/data/Data";
+import { GameData, PlayerData } from "../../../../shared/data/Data";
 import socket from "../../../SocketConnection";
 
 export abstract class

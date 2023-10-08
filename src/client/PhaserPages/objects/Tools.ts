@@ -52,7 +52,7 @@ export const getScreenCenter = (scene: Phaser.Scene) => {
 }
 
 export const makeMyUserAvatarInCenterOfPlayerScreen = (playerScene: PlayerScene) => {
-    var screenCenter = getScreenCenter(playerScene);
+    const screenCenter = getScreenCenter(playerScene);
     playerScene.userAvatarContainer = null;
     playerScene.userAvatarContainer = makeMyUserAvatar(playerScene, screenCenter.x, screenCenter.y, playerScene.userAvatarContainer) || playerScene.userAvatarContainer;
     const onRoomData = (roomData: RoomData) => {
@@ -90,7 +90,7 @@ export const RadiansToDegrees = (radians: number): number => {
 
 export const addFullScreenButton = (scene: Phaser.Scene) => {
     const screenDimensions = getScreenDimensions(scene);
-    var button = scene.add.image(screenDimensions.width - 16, 16, 'fullscreen-white', 0).setOrigin(1, 0).setInteractive();
+    const button = scene.add.image(screenDimensions.width - 16, 16, 'fullscreen-white', 0).setOrigin(1, 0).setInteractive();
 
     if (scene.scale.isFullscreen) {
         button.setVisible(false);
@@ -141,7 +141,7 @@ export const pow2 = (x: number) => {
 
 // https://stackoverflow.com/questions/491738/how-do-you-calculate-the-average-of-a-set-of-circular-data
 export const getAverageRadians = (array: number[]) => {
-    let arrayLength = array.length;
+    const arrayLength = array.length;
 
     let sinTotal = 0;
     let cosTotal = 0;

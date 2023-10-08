@@ -2,14 +2,14 @@ import { LinearProgress } from "@mui/material";
 import { useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../AppContext";
-import { persistentData } from "./objects/PersistantData";
 import ShowRoomIssue from "./PlayerPage/ShowRoomIssue";
 import ShowUserReplaceOptions from "./PlayerPage/ShowUserReplaceOptions";
 import { getStoredIds, storeIds } from "./PlayerPage/StoredBrowserIds";
+import { persistentData } from "./objects/PersistantData";
 
 export default function PlayerPageCreatingUserId() {
   const { socket } = useContext(AppContext);
-  const { roomId, userId } = useParams();
+  const { roomId } = useParams();
   const navigate = useNavigate();
 
   // add listener to get the user id

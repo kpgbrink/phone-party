@@ -21,7 +21,7 @@ export const addUserToRoom = (upsertingUser: User) => {
             // replace spaces with underscores and - with underscores
             return newName.replace(/ /g, '_').replace(/-/g, '_');
         })();
-    };
+    }
 
     const user: User = upsertingUser;
 

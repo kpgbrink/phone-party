@@ -1,4 +1,4 @@
-import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "api/src/data/datas/cardHandDatas/ThirtyOneCardHandData";
+import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "../../../../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import { ThirtyOneGame } from "../../../ThirtyOneGame";
 import { HostGameState } from "../../HostGameState";
 import { ThirtyOneGamePlayerTurn } from "./ThirtyOneGamePlayerTurn";

@@ -8,11 +8,12 @@ import { addHostUserToRoom, addUserToRoom, getRoom, getRoomHost, removeUser, upd
 
 const app = express()
 
-
-app.use(express.static(path.join(__dirname, "../")))
-app.get("/*", (_, res) => {
-    res.sendFile(path.join(__dirname, "../", "index.html"))
-})
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, "../")))
+    app.get("/*", (_, res) => {
+        res.sendFile(path.join(__dirname, "../", "index.html"))
+    })
+}
 
 const port = (Number.parseInt(process.env.PORT || '', 10)) || 3001;
 const httpServer = app.listen(port, () => {
@@ -93,8 +94,8 @@ io.on('connection', (socket) => {
     socket.on('join room', (room: string, userId: string | undefined, storedIds: StoredBrowserIds) => {
         if (room === null) return;
         console.log('---------------');
-        const storedUserId = storedIds.sessionStorage.userId ?? storedIds.localStorage.userId;
-        const storedSocketId = storedIds.sessionStorage.socketId ?? storedIds.localStorage.socketId;
+        // const storedUserId = storedIds.sessionStorage.userId ?? storedIds.localStorage.userId;
+        // const storedSocketId = storedIds.sessionStorage.socketId ?? storedIds.localStorage.socketId;
         socketLeavePreviousRoom(socket, user);
         user.room = room;
         user.socketId = socket.id;
@@ -102,7 +103,7 @@ io.on('connection', (socket) => {
         socket.join(user.room);
         // find any users that need to be replaced
         const roomData = getRoom(room);
-        // console.log('roomData', roomData);
+        console.log('roomData', roomData);
         if (!roomData) {
             console.log('emit room does not exist', userId, room);
             socket.emit(
@@ -371,8 +372,8 @@ io.on('connection', (socket) => {
     socket.on('signaling-data-to-client', (data: any, userId: string) => {
         console.log('got the signal sending to client------------- ya');
         const userTo = getRoom(user.room)?.users.find(u => u.id === userId);
-        const room = getRoom(user.room);
-        const users = room?.users;
+        // const room = getRoom(user.room);
+        // const users = room?.users;
         // console.log('users', users, userId);
         if (!userTo?.socketId) return;
         console.log('got the signal sending to client', userTo.socketId);

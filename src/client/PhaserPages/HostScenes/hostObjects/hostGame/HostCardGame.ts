@@ -1,4 +1,4 @@
-import { CardGameData, PlayerCardHandData } from "api/src/data/datas/CardData";
+import { CardGameData, PlayerCardHandData } from "../../../../../shared/data/datas/CardData";
 import { Cards } from "../../../objects/Cards";
 import CardContainer from "../../../objects/items/CardContainer";
 import PlayerTurnIndicator from "../../../objects/items/PlayerTurnIndicator";

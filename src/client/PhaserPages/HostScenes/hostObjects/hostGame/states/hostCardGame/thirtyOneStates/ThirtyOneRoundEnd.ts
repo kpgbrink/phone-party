@@ -1,4 +1,4 @@
-import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "api/src/data/datas/cardHandDatas/ThirtyOneCardHandData";
+import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "../../../../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import { CountdownTimer } from "../../../../../../objects/CountdownTimer";
 import CardContainer from "../../../../../../objects/items/CardContainer";
 import { ThirtyOneGame } from "../../../ThirtyOneGame";
@@ -60,7 +60,8 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         });
         // get all users with the lowest score
         if (!this.hostGame.hostUserAvatars) throw new Error('no host user avatars');
-        const lowestScore = Math.min(...this.hostGame.hostUserAvatars?.userAvatarContainers.map(u => u.roundScore));
+        const userAvatarContainers = this.hostGame.hostUserAvatars?.userAvatarContainers || [];
+        const lowestScore = Math.min(...userAvatarContainers.map(u => u.roundScore));
         const lowestScoreUsers = this.hostGame.hostUserAvatars?.userAvatarContainers.filter(u => u.roundScore === lowestScore);
         // all users with the lowest score lose a life except for the user who knocked if there are more than 1
         // if the user who knocked is the lowest score user then they lose 2 lives

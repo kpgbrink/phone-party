@@ -1,4 +1,4 @@
-import { CardGameData, PlayerCardHandData } from "api/src/data/datas/CardData";
+import { CardGameData, PlayerCardHandData } from "../../../../../../../shared/data/datas/CardData";
 import { transformFromObject } from "../../../../../objects/Tools";
 import { CardGameUserAvatarContainer } from "../../../../../objects/userAvatarContainer/CardGameUserAvatarContainer";
 import { HostUserAvatarsAroundTableGame } from "../../../HostUserAvatars/HostUserAvatarsAroundTable/HostUserAvatarsAroundTableGame";

@@ -1,5 +1,5 @@
-import { User } from 'api';
-import { PlayerCardHandData } from 'api/src/data/datas/CardData';
+import { User } from "../../../../shared/Types";
+import { PlayerCardHandData } from "../../../../shared/data/datas/CardData";
 import UserAvatarContainer from "../UserAvatarContainer";
 
 export abstract class CardGameUserAvatarContainer<PlayerCardHandDataType extends PlayerCardHandData> extends UserAvatarContainer {
