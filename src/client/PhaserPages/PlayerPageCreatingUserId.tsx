@@ -15,12 +15,14 @@ export default function PlayerPageCreatingUserId() {
   // add listener to get the user id
   useEffect(() => {
     const listener = (newUserId: string) => {
+      console.log("listen to the room");
       storeIds(socket.id, newUserId);
       persistentData.myUserId = newUserId;
       navigate(`/room/${roomId}/player/${newUserId}`);
     };
     socket.on("user id", listener);
     socket.emit("join room", roomId, null, getStoredIds());
+    console.log("trying to join the room");
     return () => {
       socket.off("user id", listener);
     };

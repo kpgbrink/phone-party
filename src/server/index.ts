@@ -9,10 +9,11 @@ import { addHostUserToRoom, addUserToRoom, getRoom, getRoomHost, removeUser, upd
 const app = express()
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, "../")))
-    app.get("/*", (_, res) => {
-        res.sendFile(path.join(__dirname, "../", "index.html"))
-    })
+    // Serve website in production.
+    app.use(express.static(path.resolve(__dirname, '../../client/build')));
+    app.get('/*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../../client/build/index.html'));
+    });
 }
 
 const port = (Number.parseInt(process.env.PORT || '', 10)) || 3001;
@@ -21,20 +22,18 @@ const httpServer = app.listen(port, () => {
 });
 
 const io = new Server(httpServer, {
+    cors: {
+        origin: true,
+        credentials: true,
+    },
     pingInterval: 2000,
     pingTimeout: 1500,
 });
 
 app.get('/api/getNewRoomId', (req, res) => {
-    console.log('getNewRoomId----------------');
     const newRoomId: NewRoomId = { roomId: uniqid() + randomPin() };
+    console.log('getNewRoomId', newRoomId);
     res.send(newRoomId);
-});
-
-// Serve website in production.
-app.use(express.static(path.resolve(__dirname, '../../client/build')));
-app.get('/*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../../client/build/index.html'));
 });
 
 // Generate random 6 digit number
@@ -54,6 +53,7 @@ const socketLeavePreviousRoom = (socket: Socket, user: User | undefined) => {
 }
 
 io.on('connection', (socket) => {
+    console.log('new connection');
     let user: User = {
         id: uniqid(),
         socketId: socket.id,
@@ -92,6 +92,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join room', (room: string, userId: string | undefined, storedIds: StoredBrowserIds) => {
+        console.log("trying to join the room");
         if (room === null) return;
         console.log('---------------');
         // const storedUserId = storedIds.sessionStorage.userId ?? storedIds.localStorage.userId;
