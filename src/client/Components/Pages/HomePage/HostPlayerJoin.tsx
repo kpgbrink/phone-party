@@ -7,9 +7,9 @@ import { Game, RoomData, UserAvatar } from "../../../../shared/Types";
 import { AppContext } from "../../../AppContext";
 import { palletColors } from "../../../Palettes";
 import { persistentData } from "../../../PhaserPages/objects/PersistantData";
-import { avatarImages } from "../../../PhaserPages/objects/avatarImages.generated";
 import { Textfit } from "../../../Textfit";
 import { useHostConnections } from "../../../WebRTC/HostConnections";
+import UserAvatarImageBase from "./UserAvatarImageBase";
 
 export default function HostPlayerJoin() {
   const { roomId } = useParams();
@@ -198,21 +198,11 @@ function UserAvatarImage({
   userAvatar: UserAvatar;
   type: string;
 }) {
-  type AvatarImageKey = keyof typeof userAvatar;
-  const objectKey = type as AvatarImageKey;
-  const avatarImage = userAvatar[objectKey];
-  if (avatarImage === -1) return null;
-
-  type AvatarImagesKey = keyof typeof avatarImages;
-  const avatarImagesKey = type as AvatarImagesKey;
-  const avatarImagesObject = avatarImages[avatarImagesKey];
-  const avatarImageName = avatarImagesObject[avatarImage];
-
   return (
-    <img
-      src={`${process.env.PUBLIC_URL}/assets/player/${type}/${avatarImageName}`}
-      alt={`user avatar ${type}`}
-      style={{
+    <UserAvatarImageBase
+      userAvatar={userAvatar}
+      type={type}
+      imageStyle={{
         top: "-6%",
         left: "-5%",
         position: "absolute",

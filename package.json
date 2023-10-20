@@ -7,6 +7,8 @@
     "dev": "vite",
     "dev-node": "tsx watch src/server",
     "dev-all": "concurrently \"npm run dev\" \"npm run dev-node\"",
+    "client": "vite",
+    "server": "tsx watch src/server",
     "build": "tsc && vite build && tsc -p tsconfig.server.json",
     "build-client": "vite build",
     "build-server": "tsc -p tsconfig.server.json",
