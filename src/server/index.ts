@@ -8,14 +8,6 @@ import { addHostUserToRoom, addUserToRoom, getRoom, getRoomHost, removeUser, upd
 
 const app = express()
 
-if (process.env.NODE_ENV === 'production') {
-    // Serve website in production.
-    app.use(express.static(path.resolve(__dirname, '../../client/build')));
-    app.get('/*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../../client/build/index.html'));
-    });
-}
-
 const port = (Number.parseInt(process.env.PORT || '', 10)) || 3001;
 const httpServer = app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
@@ -381,3 +373,13 @@ io.on('connection', (socket) => {
         io.to(userTo.socketId).emit('signaling-data-to-client', data);
     });
 });
+
+// eslint-disable-next-line no-constant-condition
+if (process.env.NODE_ENV === 'production') {
+    console.log('This is production being served');
+    // Serve website in production.
+    app.use(express.static(path.resolve(__dirname, '../')));
+    app.get('/*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../', 'index.html'));
+    });
+}
