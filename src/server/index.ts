@@ -84,7 +84,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join room', (room: string, userId: string | undefined, storedIds: StoredBrowserIds) => {
-        console.log("trying to join the room");
         if (room === null) return;
         console.log('---------------');
         // const storedUserId = storedIds.sessionStorage.userId ?? storedIds.localStorage.userId;
@@ -96,7 +95,7 @@ io.on('connection', (socket) => {
         socket.join(user.room);
         // find any users that need to be replaced
         const roomData = getRoom(room);
-        console.log('roomData', roomData);
+        // console.log('roomData', roomData);
         if (!roomData) {
             console.log('emit room does not exist', userId, room);
             socket.emit(
@@ -117,9 +116,9 @@ io.on('connection', (socket) => {
         // if I already match with a user socketId then I just send that user id
         const userSocketMatch = users.find(u => u.socketId === socket.id);
         if (userSocketMatch) {
-            console.log('users in room', users);
-            console.log('matched user', userSocketMatch);
-            console.log('user socket match', userSocketMatch.id, userSocketMatch.socketId);
+            // console.log('users in room', users);
+            // console.log('matched user', userSocketMatch);
+            // console.log('user socket match', userSocketMatch.id, userSocketMatch.socketId);
             socket.emit('user id', userSocketMatch.id);
             io.to(user.room).emit('room data', getRoom(user.room));
             return;
@@ -375,7 +374,7 @@ io.on('connection', (socket) => {
 });
 
 // eslint-disable-next-line no-constant-condition
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || true) {
     console.log('This is production being served');
     // Serve website in production.
     app.use(express.static(path.resolve(__dirname, '../')));

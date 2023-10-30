@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../AppContext";
 import clientConnection from "../WebRTC/ClientConnection";
 import { ClientPeerConnection } from "../WebRTC/PeerConnection";
-import { persistentData } from "./objects/PersistantData";
 import PhaserWrapper from "./PhaserWrapper";
 import PlayerGamesListMenu from "./PlayerPage/PlayerGamesListMenu";
 import ShowRoomIssue from "./PlayerPage/ShowRoomIssue";
@@ -16,6 +15,7 @@ import PlayerOmahaScene from "./PlayerScenes/PlayerOmahaScene";
 import PlayerStartingScene from "./PlayerScenes/PlayerStartingScene";
 import PlayerTexasScene from "./PlayerScenes/PlayerTexasScene";
 import PlayerThirtyOneScene from "./PlayerScenes/PlayerThirtyOneScene";
+import { persistentData } from "./objects/PersistantData";
 
 export default function PlayerPage() {
   const { socket } = useContext(AppContext);

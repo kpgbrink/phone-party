@@ -22,7 +22,6 @@ export default function PlayerPageCreatingUserId() {
     };
     socket.on("user id", listener);
     socket.emit("join room", roomId, null, getStoredIds());
-    console.log("trying to join the room");
     return () => {
       socket.off("user id", listener);
     };

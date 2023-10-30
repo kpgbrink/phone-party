@@ -6,6 +6,7 @@ import socket from "../SocketConnection";
 export class ClientPeerConnection {
     peerConnection: Peer.Instance;
     constructor() {
+        console.log('constructing the cliewnt peer connection');
         this.peerConnection = new Peer({ initiator: true });
         this.peerConnection.on('signal', data => {
             console.log('client signaling data', data);
@@ -18,7 +19,6 @@ export class ClientPeerConnection {
 export class HostPeerConnection {
     peerConnection: Peer.Instance;
     clientId: string;
-
 
     constructor(clientId: string) {
         this.peerConnection = new Peer({ initiator: false });
