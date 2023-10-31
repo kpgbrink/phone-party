@@ -4,60 +4,39 @@ import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
+
+    removeConnection(clientId: string) {
+        this.playerConnections = this.playerConnections.filter(conn => conn.clientId !== clientId);
+    }
 }
 
 // create global host connections object
 const hostConnections = new HostConnections();
 
-let number = 0;
 let hostIntervalId: string | number | NodeJS.Timeout | null | undefined = null;
 
-const onConnect = () => {
-    console.log('connected to client');
-}
-
-const onData = (data: any) => {
-    console.log(':::: Data from client', number++, data.toString());
-}
-
-const setupConnectionListeners = (connection: HostPeerConnection) => {
-    console.log('setupConnectionListeners');
-    connection.peerConnection.removeListener('connect', onConnect);
-    connection.peerConnection.on('connect', onConnect);
-
-    connection.peerConnection.removeListener('data', onData);
-    connection.peerConnection.on('data', onData);
-
-    const onClose = (connection) => {
-        return () => {
-            console.log('connection closed for client', connection.clientId);
-            connection.peerConnection.destroy();
-            hostConnections.playerConnections = hostConnections.playerConnections.filter(conn => conn.clientId !== connection.clientId);
-            console.log('hostConnections after onClose', hostConnections);
-        };
-    };
-
-    connection.peerConnection.removeListener('close', onClose);
-    connection.peerConnection.on('close', onClose(connection));
-}
-
 const onSignalingData = (data: any, clientId: string) => {
-    console.log('receiving signaling data from client', clientId);
+    console.log('Receiving signaling data from client', clientId);
 
-    // Check if a connection already exists for the client
+    // Find the connection for the client ID, or create a new one if it doesn't exist
     let connection = hostConnections.playerConnections.find(conn => conn.clientId === clientId);
 
-    // If no connection exists, create a new one
     if (!connection) {
-        console.log('creating host connection for client', clientId);
-        connection = new HostPeerConnection(clientId);
+        // No existing connection, create a new one
+        console.log('Creating a new host connection for client', clientId);
+        connection = new HostPeerConnection(clientId, hostConnections);
         hostConnections.playerConnections.push(connection);
-        setupConnectionListeners(connection);
+    } else {
+        // Existing connection found, handle the signaling data
+        console.log('Handling signaling data for existing connection', clientId);
     }
 
-    // Signal the connection with the received data
-    connection.peerConnection.signal(data);
-}
+    // Process the signaling data with the connection
+    connection.signal(data).catch((error) => {
+        console.error(`Error during signaling with client ${clientId}:`, error);
+        // Handle any signaling errors here (e.g., cleanup if necessary)
+    });
+};
 
 
 export const startListeningForHostConnections = () => {
@@ -65,7 +44,7 @@ export const startListeningForHostConnections = () => {
 }
 
 let countsa = 0;
-export const closeListeningForClientConnections = () => {
+export const closeListeningForHostConnections = () => {
     socket.off('signaling-data-to-host', onSignalingData);
 }
 
@@ -75,11 +54,7 @@ if (!hostIntervalId) {
         hostConnections.playerConnections.forEach((connection) => {
             console.log('sending test data to client', connection.clientId, '...');
             console.log('hostConnections', hostConnections);
-            try {
-                connection.peerConnection.send('hello from host: ' + countsa++);
-            } catch (e) {
-                console.log('error sending data to client', e);
-            }
+            connection.send(`Host data ${countsa++}`);
         });
     }, 5000);
 }
@@ -89,7 +64,7 @@ export const useHostConnections = () => {
     useEffect(() => {
         startListeningForHostConnections();
         return () => {
-            closeListeningForClientConnections();
+            closeListeningForHostConnections();
         }
     }, []);
 }
