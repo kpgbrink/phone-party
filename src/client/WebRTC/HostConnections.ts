@@ -29,6 +29,7 @@ const onSignalingData = (data: any, clientId: string) => {
     } else {
         // Existing connection found, handle the signaling data
         console.log('Handling signaling data for existing connection', clientId);
+        // recreate peer if it is destroyed
     }
 
     // Process the signaling data with the connection

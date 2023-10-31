@@ -5,6 +5,7 @@ export class ClientConnection {
     hostConnection: ClientPeerConnection | null = null;
 
     recreatePeerConnection() {
+        console.log('recreating peer connection');
         // Clean up the existing connection before creating a new one
         if (this.hostConnection) {
             this.hostConnection.peerConnection.destroy();

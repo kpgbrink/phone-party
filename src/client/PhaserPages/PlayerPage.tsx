@@ -32,7 +32,7 @@ export default function PlayerPage() {
     const userIdListener = (existingUserId: string) => {
       // make clientConnection.hostCOnnection if it does not exist
       clientConnection.hostConnection =
-        clientConnection.hostConnection || new ClientPeerConnection();
+        clientConnection.hostConnection || new ClientPeerConnection(clientConnection);
       setRoomExists(true);
       if (existingUserId !== userId) {
         persistentData.myUserId = existingUserId;

@@ -53,7 +53,12 @@ class BasePeerConnection {
         } catch (e) {
             console.error('Error sending data:', e);
             // Handle the error or retry logic here
+            this.handleSendError(e);
         }
+    }
+
+    handleSendError(error: Error) {
+        console.log('override this');
     }
 
     destroy() {
@@ -78,7 +83,6 @@ export class ClientPeerConnection extends BasePeerConnection {
     onClose() {
         console.log('connection closed');
         this.destroy();
-        this.clientConnection.hostConnection = null;
         console.log('clientConnection to host is now', this.clientConnection);
     }
 
@@ -86,13 +90,24 @@ export class ClientPeerConnection extends BasePeerConnection {
         console.error('Peer connection error:', error);
 
         // Notify the user of the connection issue
-        alert("A connection error has occurred. Trying to reconnect...");
+        // alert("A connection error has occurred. Trying to reconnect...");
 
         // Try to reconnect every 2 seconds
         setInterval(() => {
             console.log('Attempting to recreate the peer connection...');
             this.clientConnection.recreatePeerConnection();
         }, 2000); // Attempt to reconnect every 2 seconds
+    }
+
+    handleSendError(error: Error): void {
+        console.error('Error sending data:', error);
+        // Handle the error or retry logic here
+        console.log('this.clientConnection', this.clientConnection);
+        try {
+            this.clientConnection.recreatePeerConnection();
+        }catch (e) {
+            console.log('error', e);
+        }
     }
 }
 
@@ -129,10 +144,16 @@ export class HostPeerConnection extends BasePeerConnection {
         this.hostConnections.removeConnection(this.clientId);
         // Clean up the connection
         this.destroy();
-
     }
 
     onError(err: Error) {
         console.error('Host peer connection error:', err);
+    }
+
+    handleSendError(error: Error): void {
+        console.error('Error sending data:', error);
+        // Handle the error or retry logic here
+        this.hostConnections.removeConnection(this.clientId);
+        this.destroy()
     }
 }
