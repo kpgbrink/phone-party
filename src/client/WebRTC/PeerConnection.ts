@@ -57,7 +57,7 @@ class BasePeerConnection {
         }
     }
 
-    handleSendError(error: Error) {
+    handleSendError(error: any) {
         console.log('override this');
     }
 
@@ -99,13 +99,13 @@ export class ClientPeerConnection extends BasePeerConnection {
         }, 2000); // Attempt to reconnect every 2 seconds
     }
 
-    handleSendError(error: Error): void {
+    handleSendError(error: any): void {
         console.error('Error sending data:', error);
         // Handle the error or retry logic here
         console.log('this.clientConnection', this.clientConnection);
         try {
             this.clientConnection.recreatePeerConnection();
-        }catch (e) {
+        } catch (e) {
             console.log('error', e);
         }
     }
@@ -150,7 +150,7 @@ export class HostPeerConnection extends BasePeerConnection {
         console.error('Host peer connection error:', err);
     }
 
-    handleSendError(error: Error): void {
+    handleSendError(error: any): void {
         console.error('Error sending data:', error);
         // Handle the error or retry logic here
         this.hostConnections.removeConnection(this.clientId);
