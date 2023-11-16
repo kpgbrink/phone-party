@@ -10,6 +10,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         this.socketListenForGetUserStateRequest();
         this.socketListenForGetGameStateRequest();
         this.socketListenForGetDataRequest();
+        this.listenForWebRTCControls();
     }
 
     destroy() {
@@ -87,6 +88,12 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         const playerDataToSend = playerData || this.getPlayerDataToSend(userId);
         socket.emit("dataToUser", userId, gameDataToSend, playerDataToSend);
     }
-
     // --- end data ---
+
+    // Receive WEBRTC controls --------------------
+    listenForWebRTCControls() {
+
+    }
+
+    // --- end receive WEBRTC controls ---
 }

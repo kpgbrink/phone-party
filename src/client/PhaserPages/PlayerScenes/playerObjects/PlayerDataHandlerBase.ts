@@ -28,7 +28,7 @@ export abstract class
     }
 
     destroy() {
-        console.log('destorying player data handler');
+        console.log('destroying player data handler');
         socket.removeListener("playerDataToUser");
         socket.removeListener("gameDataToUser");
         socket.removeListener("dataToUser");
@@ -95,4 +95,10 @@ export abstract class
 
     // --- end data ---
 
+    // Receive WEBRTC controls --------------------
+    sendWebRTCControls() {
+
+    }
+
+    // --- end receive WEBRTC controls ---
 }
