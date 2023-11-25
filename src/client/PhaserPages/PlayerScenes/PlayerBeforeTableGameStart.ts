@@ -5,12 +5,16 @@ import PlayerScene from "./playerObjects/PlayerScene";
 
 export default class PlayerBeforeTableGameStart extends PlayerScene {
     readyButton: MenuButton | null;
+    leftButton: MenuButton | null;
+    rightButton: MenuButton | null;
     waitingForPlayersText: Phaser.GameObjects.Text | null;
     playerBeforeGameStartDataHandler: PlayerBeforeTableGameStartDataHandler | null = null;
 
     constructor() {
         super({ key: 'PlayerBeforeTableGameStart' });
         this.readyButton = null;
+        this.leftButton = null;
+        this.rightButton = null;
         this.waitingForPlayersText = null;
     }
 
@@ -23,6 +27,7 @@ export default class PlayerBeforeTableGameStart extends PlayerScene {
         addUserNameText(this);
         makeMyUserAvatarInCenterOfPlayerScreen(this);
         this.addReadyButton();
+        this.addLeftRightButtons();
         // this.checkIfIAmReady();
         this.addInstructions();
         this.playerBeforeGameStartDataHandler = new PlayerBeforeTableGameStartDataHandler(this);
@@ -30,8 +35,8 @@ export default class PlayerBeforeTableGameStart extends PlayerScene {
     }
 
     addInstructions() {
-        var screenDimensions = getScreenDimensions(this);
-        this.add.text(100, screenDimensions.height / 3, 'Drag your player on the other screen to yourself!',
+        const screenDimensions = getScreenDimensions(this);
+        this.add.text(100, screenDimensions.height / 3, 'Select your location on the table',
             {
                 color: 'green',
                 fontSize: '50px',
@@ -68,6 +73,26 @@ export default class PlayerBeforeTableGameStart extends PlayerScene {
 
         });
         this.add.existing(this.readyButton);
+    }
+
+    addLeftRightButtons() {
+        const screenDimensions = getScreenDimensions(this);
+
+        // Left Button
+        this.leftButton = new MenuButton(200 / 2, screenDimensions.height / 2, this);
+        this.leftButton.setText(' <  ');
+        this.leftButton.on('pointerdown', () => {
+            // Left button event logic
+        });
+        this.add.existing(this.leftButton);
+
+        // Right Button
+        this.rightButton = new MenuButton(screenDimensions.width - 300 / 2, screenDimensions.height / 2, this);
+        this.rightButton.setText('  > ');
+        this.rightButton.on('pointerdown', () => {
+            // Right button event logic
+        });
+        this.add.existing(this.rightButton);
     }
 
     update(time: number, delta: number) {

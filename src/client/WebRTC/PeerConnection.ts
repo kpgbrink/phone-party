@@ -22,6 +22,9 @@ class BasePeerConnection {
 
     onData(data: any) {
         console.log('Data from peer', data.toString());
+        if (data?.data === 1) {
+            console.log('data is 1');
+        }
     }
 
     onClose() {

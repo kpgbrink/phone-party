@@ -71,7 +71,8 @@ export abstract class
     requestGameData() {
         socket.emit("getGameData");
     }
-    // Data --------------------
+
+    // Data (BOTH PLAYER AND GAME DATA) --------------------
     getData(): [Partial<GameDataType> | undefined, Partial<PlayerDataType> | undefined] {
         return [this.getGameDataToSend(), this.getPlayerDataToSend()];
     }
@@ -81,7 +82,6 @@ export abstract class
             this.onGameDataReceived(gameData, playerData);
             this.onPlayerDataReceived(playerData, gameData);
         });
-
     }
 
     sendData(updateGameData: boolean = false) {
@@ -99,6 +99,8 @@ export abstract class
     sendWebRTCControls() {
 
     }
+
+    // 
 
     // --- end receive WEBRTC controls ---
 }

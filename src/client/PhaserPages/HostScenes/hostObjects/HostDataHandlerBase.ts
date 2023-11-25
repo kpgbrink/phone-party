@@ -68,8 +68,8 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         const gameDataToSend = gameData || this.getGameDataToSend();
         socket.emit("gameDataToUser", userId, gameDataToSend);
     }
-    // Data --------------------
 
+    // Data (BOTH PLAYER AND GAME DATA) --------------------
     listenForData() {
         socket.on("dataToHost", (userId: string, gameData: Partial<GameDataType>, playerData: Partial<PlayerDataType>, updateGameData: boolean) => {
             this.onGameDataReceived(userId, gameData, playerData, updateGameData);

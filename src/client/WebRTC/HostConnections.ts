@@ -44,7 +44,7 @@ export const startListeningForHostConnections = () => {
     socket.on('signaling-data-to-host', onSignalingData);
 }
 
-let countsa = 0;
+const countsa = 0;
 export const closeListeningForHostConnections = () => {
     socket.off('signaling-data-to-host', onSignalingData);
 }
@@ -55,7 +55,7 @@ if (!hostIntervalId) {
         hostConnections.playerConnections.forEach((connection) => {
             console.log('sending test data to client', connection.clientId, '...');
             console.log('hostConnections', hostConnections);
-            connection.send(`Host data ${countsa++}`);
+            connection.send({ data: 1 });
         });
     }, 5000);
 }
