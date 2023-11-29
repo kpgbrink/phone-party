@@ -1,5 +1,6 @@
 import { GameData, PlayerData } from "../../../../shared/data/Data";
 import socket from "../../../SocketConnection";
+import clientConnection from "../../../WebRTC/ClientConnection";
 
 export abstract class
     PlayerDataHandlerBase
@@ -18,6 +19,10 @@ export abstract class
         this.listenForData();
         this.requestData();
 
+        this.initializeWebRTCDataListener();
+
+        this.initializeConnectionReadyCallback();
+
         // on scene destroy
         this.scene.events.on("shutdown", () => {
             this.destroy();
@@ -27,12 +32,60 @@ export abstract class
         });
     }
 
+    private initializeConnectionReadyCallback() {
+        clientConnection.setOnConnectionReadyCallback(() => this.initializeWebRTCDataListener());
+    }
+
     destroy() {
         console.log('destroying player data handler');
         socket.removeListener("playerDataToUser");
         socket.removeListener("gameDataToUser");
         socket.removeListener("dataToUser");
     }
+
+    // WEBRTC --------------------
+    initializeWebRTCDataListener() {
+        if (!clientConnection.hostConnection) return;
+        clientConnection.hostConnection.setDataListener((data: any) => {
+            try {
+                const parsedData = JSON.parse(data);
+                console.log('received data via WebRTC:', parsedData);
+                switch (parsedData.type) {
+                    case 'playerData':
+                        this.onPlayerDataReceived(parsedData.data, null);
+                        break;
+                    case 'gameData':
+                        this.onGameDataReceived(parsedData.data, null);
+                        break;
+                    case 'playerAndGameData': {
+                        const { playerData, gameData } = parsedData.data;
+                        this.onPlayerDataReceived(playerData, gameData);
+                        this.onGameDataReceived(gameData, playerData);
+                        break;
+                    }
+                    default:
+                        console.error(`Unknown data type received:`, parsedData);
+                        break;
+                }
+            } catch (error) {
+                console.error('Error handling incoming WebRTC data:', error);
+            }
+        });
+    }
+
+    trySendDataViaWebRTC(data: any, dataType: string): boolean {
+        if (!clientConnection.hostConnection) {
+            return false;
+        }
+
+        const success = clientConnection.hostConnection.sendDataViaWebRTC({ type: dataType, data });
+        if (!success) {
+            console.error(`Failed to send ${dataType} via WebRTC`);
+        }
+        return success;
+    }
+
+    // --- end WEBRTC ---
 
     // PlayerData --------------------
     abstract getPlayerDataToSend(): Partial<PlayerDataType> | undefined;
@@ -46,7 +99,12 @@ export abstract class
     }
 
     sendPlayerData() {
-        socket.emit("playerDataToHost", this.getPlayerDataToSend());
+        const playerDataToSend = this.getPlayerDataToSend();
+        const success = this.trySendDataViaWebRTC(playerDataToSend, 'playerData');
+        if (!success) {
+            console.log('Sending player data via sockets');
+            socket.emit("playerDataToHost", playerDataToSend);
+        }
     }
 
     requestPlayerData() {
@@ -65,7 +123,12 @@ export abstract class
     }
 
     sendGameData(updateGameData: boolean = false) {
-        socket.emit("gameDataToHost", this.getGameDataToSend(), updateGameData);
+        const gameDataToSend = this.getGameDataToSend();
+        const success = this.trySendDataViaWebRTC(gameDataToSend, 'gameData');
+        if (!success) {
+            console.log('Sending game data via sockets');
+            socket.emit("gameDataToHost", gameDataToSend, updateGameData);
+        }
     }
 
     requestGameData() {
@@ -85,8 +148,15 @@ export abstract class
     }
 
     sendData(updateGameData: boolean = false) {
-        // my user id  
-        socket.emit("dataToHost", this.getGameDataToSend(), this.getPlayerDataToSend(), updateGameData);
+        const gameDataToSend = this.getGameDataToSend();
+        const playerDataToSend = this.getPlayerDataToSend();
+        const combinedData = { gameData: gameDataToSend, playerData: playerDataToSend };
+
+        const success = this.trySendDataViaWebRTC(combinedData, 'playerAndGameData');
+        if (!success) {
+            console.log('Sending combined data via sockets');
+            socket.emit("dataToHost", gameDataToSend, playerDataToSend, updateGameData);
+        }
     }
 
     requestData() {
@@ -94,13 +164,4 @@ export abstract class
     }
 
     // --- end data ---
-
-    // Receive WEBRTC controls --------------------
-    sendWebRTCControls() {
-
-    }
-
-    // 
-
-    // --- end receive WEBRTC controls ---
 }

@@ -3,6 +3,16 @@ import { ClientPeerConnection } from "./PeerConnection";
 
 export class ClientConnection {
     hostConnection: ClientPeerConnection | null = null;
+    onConnectionReady: (() => void) | null = null;
+
+    createClientPeerConnection() {
+        console.log('creating client peer connection');
+        this.hostConnection = new ClientPeerConnection(this);
+        console.log('clientConnection is now', this);
+        if (this.onConnectionReady) {
+            this.onConnectionReady();
+        }
+    }
 
     recreatePeerConnection() {
         console.log('recreating peer connection');
@@ -12,7 +22,16 @@ export class ClientConnection {
             this.hostConnection = null;
         }
         // Create a new peer connection instance
-        clientConnection.hostConnection = new ClientPeerConnection(clientConnection);
+        this.hostConnection = new ClientPeerConnection(clientConnection);
+
+        // Notify that connection is ready
+        if (this.onConnectionReady) {
+            this.onConnectionReady();
+        }
+    }
+
+    setOnConnectionReadyCallback(callback: () => void) {
+        this.onConnectionReady = callback;
     }
 }
 
@@ -20,8 +39,8 @@ const clientConnection = new ClientConnection();
 
 export default clientConnection;
 
-let number = 0;
-let intervalId: string | number | NodeJS.Timeout | null | undefined = null;
+// const number = 0;
+// const intervalId: string | number | NodeJS.Timeout | null | undefined = null;
 
 export const onSignalingData = (data: any) => {
     if (clientConnection.hostConnection == null) {
@@ -30,20 +49,23 @@ export const onSignalingData = (data: any) => {
     console.log('client dataaaaaaaaaa', data, 'clientConnection', clientConnection);
     //If the connection does not exist then create a new one
     if (!clientConnection.hostConnection) {
-        clientConnection.hostConnection = new ClientPeerConnection(clientConnection);
+        clientConnection.createClientPeerConnection();
+    }
+    if (clientConnection.hostConnection == null) {
+        throw new Error('hostConnection is null')
     }
 
     clientConnection.hostConnection.peerConnection.signal(data);
     console.log('clientConnection to host is now', clientConnection);
 }
 
-// Initialize the interval to send test data every 2 seconds.
-// Only one interval will be active at any point in time.
-if (!intervalId) {
-    intervalId = setInterval(() => {
-        clientConnection?.hostConnection?.send(`Client data ${number++}`);
-    }, 5000);
-}
+// // Initialize the interval to send test data every 2 seconds.
+// // Only one interval will be active at any point in time.
+// if (!intervalId) {
+//     intervalId = setInterval(() => {
+//         clientConnection?.hostConnection?.send(`Client data ${number++}`);
+//     }, 5000);
+// }
 
 export const startListeningForClientConnections = () => {
     console.log('start listening for client connections');

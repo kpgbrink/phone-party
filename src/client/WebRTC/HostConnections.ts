@@ -4,16 +4,34 @@ import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
+    private connectionChangeSubscribers: Array<(connection: HostPeerConnection | string, action: string) => void> = [];
+
+    addConnection(connection: HostPeerConnection) {
+        this.playerConnections.push(connection);
+        connection.setDataListener((data) => {
+            // Define your data handling logic here
+        });
+        this.connectionChangeSubscribers.forEach(subscriber => subscriber(connection, 'added'));
+    }
 
     removeConnection(clientId: string) {
+        const connection = this.playerConnections.find(conn => conn.clientId === clientId);
+        if (connection) {
+            connection.removeDataListener();
+        }
         this.playerConnections = this.playerConnections.filter(conn => conn.clientId !== clientId);
+        this.connectionChangeSubscribers.forEach(subscriber => subscriber(clientId, 'removed'));
+    }
+
+    subscribeToConnectionChanges(subscriber: (connection: HostPeerConnection | string, action: string) => void) {
+        this.connectionChangeSubscribers.push(subscriber);
     }
 }
 
 // create global host connections object
-const hostConnections = new HostConnections();
+export const hostConnections = new HostConnections();
 
-let hostIntervalId: string | number | NodeJS.Timeout | null | undefined = null;
+// const hostIntervalId: string | number | NodeJS.Timeout | null | undefined = null;
 
 const onSignalingData = (data: any, clientId: string) => {
     console.log('Receiving signaling data from client', clientId);
@@ -25,7 +43,7 @@ const onSignalingData = (data: any, clientId: string) => {
         // No existing connection, create a new one
         console.log('Creating a new host connection for client', clientId);
         connection = new HostPeerConnection(clientId, hostConnections);
-        hostConnections.playerConnections.push(connection);
+        hostConnections.addConnection(connection);
     } else {
         // Existing connection found, handle the signaling data
         console.log('Handling signaling data for existing connection', clientId);
@@ -44,21 +62,21 @@ export const startListeningForHostConnections = () => {
     socket.on('signaling-data-to-host', onSignalingData);
 }
 
-const countsa = 0;
+// const countsa = 0;
 export const closeListeningForHostConnections = () => {
     socket.off('signaling-data-to-host', onSignalingData);
 }
 
-// every 5 seconds send test data to all clients
-if (!hostIntervalId) {
-    hostIntervalId = setInterval(() => {
-        hostConnections.playerConnections.forEach((connection) => {
-            console.log('sending test data to client', connection.clientId, '...');
-            console.log('hostConnections', hostConnections);
-            connection.send({ data: 1 });
-        });
-    }, 5000);
-}
+// // every 5 seconds send test data to all clients
+// if (!hostIntervalId) {
+//     hostIntervalId = setInterval(() => {
+//         hostConnections.playerConnections.forEach((connection) => {
+//             console.log('sending test data to client', connection.clientId, '...');
+//             console.log('hostConnections', hostConnections);
+//             connection.send({ data: 1 });
+//         });
+//     }, 5000);
+// }
 
 // create react custom hook to listen for connections
 export const useHostConnections = () => {
