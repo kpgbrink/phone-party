@@ -39,16 +39,17 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
     hostConnectionsSubscribeToConnectionChanges() {
         hostConnections.subscribeToConnectionChanges((connection, action) => {
             if (action === 'added' && typeof connection !== 'string') {
+                console.log('connection added');
                 this.setupDataListener(connection);
             } else if (action === 'removed') {
-                this.removeDataListener(connection);
+                console.log('connection removed');
             }
         });
     }
 
     setupDataListener(connection: HostPeerConnection) {
         console.log('setting up data listener for', connection.clientId);
-        const dataListener = (data: any) => {
+        const dataHandler = (data: any) => {
             try {
                 const parsedData = JSON.parse(data);
                 console.log('received data via WebRTC:', parsedData);
@@ -77,22 +78,9 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
             }
         };
 
-
-        connection.setDataListener(dataListener);
+        connection.setDataHandler(dataHandler);
     }
 
-    removeDataListener(connection: HostPeerConnection | string) {
-        if (typeof connection === 'string') {
-            // Find the connection by ID and remove the listener
-            const conn = hostConnections.playerConnections.find(c => c.clientId === connection);
-            if (conn) {
-                conn.removeDataListener();
-            }
-        } else {
-            // Remove listener from the connection object directly
-            connection.removeDataListener();
-        }
-    }
     // --- end HostConnections ---
     trySendDataViaWebRTC(userId: string | null, data: any, type: string): boolean {
         if (userId === null) {

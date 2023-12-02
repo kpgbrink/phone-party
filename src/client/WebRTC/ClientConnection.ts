@@ -39,9 +39,6 @@ const clientConnection = new ClientConnection();
 
 export default clientConnection;
 
-// const number = 0;
-// const intervalId: string | number | NodeJS.Timeout | null | undefined = null;
-
 export const onSignalingData = (data: any) => {
     if (clientConnection.hostConnection == null) {
         console.log('this is supposed to happen');
@@ -58,14 +55,6 @@ export const onSignalingData = (data: any) => {
     clientConnection.hostConnection.peerConnection.signal(data);
     console.log('clientConnection to host is now', clientConnection);
 }
-
-// // Initialize the interval to send test data every 2 seconds.
-// // Only one interval will be active at any point in time.
-// if (!intervalId) {
-//     intervalId = setInterval(() => {
-//         clientConnection?.hostConnection?.send(`Client data ${number++}`);
-//     }, 5000);
-// }
 
 export const startListeningForClientConnections = () => {
     console.log('start listening for client connections');

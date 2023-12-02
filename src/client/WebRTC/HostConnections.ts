@@ -8,16 +8,13 @@ export class HostConnections {
 
     addConnection(connection: HostPeerConnection) {
         this.playerConnections.push(connection);
-        connection.setDataListener((data) => {
-            // Define your data handling logic here
-        });
         this.connectionChangeSubscribers.forEach(subscriber => subscriber(connection, 'added'));
     }
 
     removeConnection(clientId: string) {
         const connection = this.playerConnections.find(conn => conn.clientId === clientId);
         if (connection) {
-            connection.removeDataListener();
+            connection.removeAllListeners();
         }
         this.playerConnections = this.playerConnections.filter(conn => conn.clientId !== clientId);
         this.connectionChangeSubscribers.forEach(subscriber => subscriber(clientId, 'removed'));
@@ -48,6 +45,16 @@ const onSignalingData = (data: any, clientId: string) => {
         // Existing connection found, handle the signaling data
         console.log('Handling signaling data for existing connection', clientId);
         // recreate peer if it is destroyed
+        if (connection.peerConnection.destroyed) {
+            console.log('recreating peer connection');
+            // Clean up the existing connection before creating a new one
+            if (connection) {
+                connection.peerConnection.destroy();
+            }
+            // Create a new peer connection instance
+            connection = new HostPeerConnection(clientId, hostConnections);
+            hostConnections.addConnection(connection);
+        }
     }
 
     // Process the signaling data with the connection

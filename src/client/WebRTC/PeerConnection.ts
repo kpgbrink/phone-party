@@ -5,6 +5,7 @@ import { HostConnections } from "./HostConnections";
 
 // Base class for common peer connection functionality
 class BasePeerConnection {
+    dataHandler: (data: any) => void;
     peerConnection: Peer.Instance;
 
     constructor(initiator: boolean) {
@@ -14,18 +15,25 @@ class BasePeerConnection {
             this.handleSignal(data);
         });
         this.setupConnectionListeners();
+        this.dataHandler = this.defaultDataHandler;
+    }
+
+    private defaultDataHandler(data: any) {
+        // Default behavior or empty function
+        console.log('default data handler', data);
+    }
+
+    public setDataHandler(newHandler: (data: any) => void): void {
+        this.dataHandler = newHandler;
     }
 
     onConnect() {
         console.log('connected to peer');
     }
 
-    // onData(data: any) {
-    //     console.log('Data from peer', data.toString());
-    //     if (data?.data === 1) {
-    //         console.log('data is 1');
-    //     }
-    // }
+    onData(data: any) {
+        this.dataHandler(data);
+    }
 
     sendDataViaWebRTC(data: any): boolean {
         try {
@@ -49,7 +57,7 @@ class BasePeerConnection {
 
     setupConnectionListeners() {
         this.peerConnection.on('connect', this.onConnect);
-        // this.peerConnection.on('data', this.onData);
+        this.peerConnection.on('data', this.onData);
         this.peerConnection.on('close', this.onClose);
         this.peerConnection.on('error', (err) => this.onError(err));
     }
@@ -88,10 +96,6 @@ export class ClientPeerConnection extends BasePeerConnection {
     constructor(clientConnection: ClientConnection) {
         super(true); // Client is the initiator
         this.clientConnection = clientConnection;
-    }
-
-    setDataListener(listener: (data: any) => void) {
-        this.peerConnection.on('data', listener);
     }
 
     handleSignal(data: any) {
@@ -134,25 +138,10 @@ export class HostPeerConnection extends BasePeerConnection {
     clientId: string;
     hostConnections: HostConnections;
 
-    private dataListener?: (data: any) => void;
-
-
     constructor(clientId: string, hostConnections: HostConnections) {
         super(false); // Host is not the initiator
         this.clientId = clientId;
         this.hostConnections = hostConnections;
-    }
-
-    setDataListener(listener: (data: any) => void) {
-        this.dataListener = listener;
-        this.peerConnection.on('data', listener);
-    }
-
-    removeDataListener() {
-        if (this.dataListener) {
-            this.peerConnection.removeListener('data', this.dataListener);
-            this.dataListener = undefined;
-        }
     }
 
     handleSignal(data: any) {
