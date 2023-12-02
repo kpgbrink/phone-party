@@ -46,7 +46,7 @@ export abstract class
     // WEBRTC --------------------
     initializeWebRTCDataListener() {
         if (!clientConnection.hostConnection) return;
-        clientConnection.hostConnection.dataHandler((data: any) => {
+        const dataHandler = (data: any) => {
             try {
                 const parsedData = JSON.parse(data);
                 console.log('received data via WebRTC:', parsedData);
@@ -71,6 +71,8 @@ export abstract class
                 console.error('Error handling incoming WebRTC data:', error);
             }
         });
+
+        clientConnection.hostConnection.setDataHandler(dataHandler);
     }
 
     trySendDataViaWebRTC(data: any, dataType: string): boolean {

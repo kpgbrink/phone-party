@@ -39,8 +39,8 @@ class BasePeerConnection {
         try {
             const jsonData = JSON.stringify(data);
             console.log('sending data via WebRTC:', jsonData);
-            this.send(jsonData);
-            return true;
+            const sendSuccess = this.send(jsonData);
+            return sendSuccess;
         } catch (error) {
             console.error('Error sending data via WebRTC:', error);
             return false;
@@ -72,12 +72,19 @@ class BasePeerConnection {
 
     send(data: any) {
         try {
+            console.log('sending data is it connected', this.peerConnection.connected);
+            if (!this.peerConnection.connected) {
+                // not yet connected fail this 
+                return false;
+            }
             this.peerConnection.send(data);
         } catch (e) {
             // console.error('Error sending data:', e);
             // Handle the error or retry logic here
             this.handleSendError(e);
+            throw e;
         }
+        return true;
     }
 
     handleSendError(error: any) {

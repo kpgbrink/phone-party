@@ -143,6 +143,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
 
         // If WebRTC fails, fall back to using socket
         if (!success) {
+            console.log('failed had to use sockets to send game data');
             socket.emit("gameDataToUser", userId, gameDataToSend);
         }
     }
@@ -171,6 +172,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
 
         // If WebRTC fails, fall back to using socket
         if (!success) {
+            console.log('failed had to use sockets to send data');
             socket.emit("dataToUser", userId, gameDataToSend, playerDataToSend);
         }
     }
