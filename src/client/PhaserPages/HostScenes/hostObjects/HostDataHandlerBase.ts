@@ -15,7 +15,6 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         this.socketListenForGetDataRequest();
 
         this.initializeDataListenersForExistingConnections();
-        this.hostConnectionsSubscribeToConnectionChanges();
     }
 
     destroy() {
@@ -33,17 +32,6 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         // Set up listeners for existing connections
         hostConnections.playerConnections.forEach(connection => {
             this.setupDataListener(connection);
-        });
-    }
-
-    hostConnectionsSubscribeToConnectionChanges() {
-        hostConnections.subscribeToConnectionChanges((connection, action) => {
-            if (action === 'added' && typeof connection !== 'string') {
-                console.log('connection added');
-                this.setupDataListener(connection);
-            } else if (action === 'removed') {
-                console.log('connection removed');
-            }
         });
     }
 

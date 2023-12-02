@@ -4,11 +4,9 @@ import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
-    private connectionChangeSubscribers: Array<(connection: HostPeerConnection | string, action: string) => void> = [];
 
     addConnection(connection: HostPeerConnection) {
         this.playerConnections.push(connection);
-        this.connectionChangeSubscribers.forEach(subscriber => subscriber(connection, 'added'));
     }
 
     removeConnection(clientId: string) {
@@ -17,11 +15,6 @@ export class HostConnections {
             connection.removeAllListeners();
         }
         this.playerConnections = this.playerConnections.filter(conn => conn.clientId !== clientId);
-        this.connectionChangeSubscribers.forEach(subscriber => subscriber(clientId, 'removed'));
-    }
-
-    subscribeToConnectionChanges(subscriber: (connection: HostPeerConnection | string, action: string) => void) {
-        this.connectionChangeSubscribers.push(subscriber);
     }
 }
 
