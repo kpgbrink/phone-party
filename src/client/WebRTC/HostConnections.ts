@@ -55,6 +55,7 @@ const onSignalingData = (data: any, clientId: string) => {
         console.error(`Error during signaling with client ${clientId}:`, error);
         // Handle any signaling errors here (e.g., cleanup if necessary)
     });
+    console.log('hostConnections', hostConnections);
 };
 
 

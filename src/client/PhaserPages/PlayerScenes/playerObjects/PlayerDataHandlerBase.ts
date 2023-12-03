@@ -70,7 +70,7 @@ export abstract class
             } catch (error) {
                 console.error('Error handling incoming WebRTC data:', error);
             }
-        });
+        };
 
         clientConnection.hostConnection.setDataHandler(dataHandler);
     }
