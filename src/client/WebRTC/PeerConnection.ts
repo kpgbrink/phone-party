@@ -57,7 +57,7 @@ class BasePeerConnection {
 
     setupConnectionListeners() {
         this.peerConnection.on('connect', this.onConnect);
-        this.peerConnection.on('data', this.onData);
+        this.peerConnection.on('data', (data) => this.onData(data));
         this.peerConnection.on('close', this.onClose);
         this.peerConnection.on('error', (err) => this.onError(err));
     }
