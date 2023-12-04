@@ -4,9 +4,12 @@ import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
+    // Map to track pending connections. Prevent multiple connections from the same client
+    pendingConnections: Map<string, boolean> = new Map();
 
     addConnection(connection: HostPeerConnection) {
         this.playerConnections.push(connection);
+        this.pendingConnections.delete(connection.clientId); // Remove
     }
 
     removeConnection(clientId: string) {
@@ -25,35 +28,32 @@ const onSignalingData = (data: any, clientId: string) => {
     console.log('3132 Receiving signaling data from client', clientId);
     console.log('3132 hostConnections Before', hostConnections);
 
-    // Find the connection for the client ID, or create a new one if it doesn't exist
-    let connection = hostConnections.playerConnections.find(conn => conn.clientId === clientId);
+    // Use an IIFE to determine the connection and assign it to a constant
+    const connection = (() => {
+        let conn = hostConnections.playerConnections.find(conn => conn.clientId === clientId);
 
-    if (!connection) {
-        // No existing connection, create a new one
-        console.log('3132 Creating a new host connection for client', clientId);
-        connection = new HostPeerConnection(clientId, hostConnections);
-        hostConnections.addConnection(connection);
-    } else {
-        // Existing connection found, handle the signaling data
-        console.log('3132 Handling signaling data for existing connection', clientId);
-        // recreate peer if it is destroyed
-        if (connection.peerConnection.destroyed) {
+        if (!conn) {
+            // No existing connection, create a new one
+            console.log('3132 Creating a new host connection for client', clientId);
+            conn = new HostPeerConnection(clientId, hostConnections);
+            hostConnections.addConnection(conn);
+        } else if (conn.peerConnection.destroyed) {
+            // Existing connection found, but peer is destroyed
             console.log('3132 recreating peer connection');
-            // Clean up the existing connection before creating a new one
-            if (connection) {
-                connection.peerConnection.destroy();
-            }
-            // Create a new peer connection instance
-            connection = new HostPeerConnection(clientId, hostConnections);
-            hostConnections.addConnection(connection);
+            hostConnections.removeConnection(clientId);
+            conn.peerConnection.destroy();
+            conn = new HostPeerConnection(clientId, hostConnections);
+            hostConnections.addConnection(conn);
         }
-    }
+        return conn;
+    })();
 
     // Process the signaling data with the connection
     connection.signal(data).catch((error) => {
         console.error(`3132 Error during signaling with client ${clientId}:`, error);
         // Handle any signaling errors here (e.g., cleanup if necessary)
     });
+
     console.log('3132 hostConnections After', hostConnections);
 };
 
