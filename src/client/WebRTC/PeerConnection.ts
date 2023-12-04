@@ -75,12 +75,14 @@ class BasePeerConnection {
             console.log('sending data is it connected', this.peerConnection.connected);
             if (!this.peerConnection.connected) {
                 // not yet connected fail this 
+                console.log('not yet connected');
                 return false;
             }
             this.peerConnection.send(data);
         } catch (e) {
             // console.error('Error sending data:', e);
             // Handle the error or retry logic here
+            console.log('failed to send data let fix that');
             this.handleSendError(e);
             throw e;
         }

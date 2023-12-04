@@ -4,12 +4,9 @@ import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
-    // Map to track pending connections. Prevent multiple connections from the same client
-    pendingConnections: Map<string, boolean> = new Map();
 
     addConnection(connection: HostPeerConnection) {
         this.playerConnections.push(connection);
-        this.pendingConnections.delete(connection.clientId); // Remove
     }
 
     removeConnection(clientId: string) {

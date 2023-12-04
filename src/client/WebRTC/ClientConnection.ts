@@ -40,6 +40,7 @@ const clientConnection = new ClientConnection();
 export default clientConnection;
 
 export const onSignalingData = (data: any) => {
+    console.log('Receiving signaling data from host');
     if (clientConnection.hostConnection == null) {
         console.log('this is supposed to happen');
     }
