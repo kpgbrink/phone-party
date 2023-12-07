@@ -7,6 +7,8 @@ import { HostConnections } from "./HostConnections";
 class BasePeerConnection {
     dataHandler: (data: any) => void;
     peerConnection: Peer.Instance;
+    notConnectedCountAllowed = 2;
+    notConnectedCount = 0;
 
     constructor(initiator: boolean) {
         const options = { initiator: initiator };
@@ -74,6 +76,12 @@ class BasePeerConnection {
         try {
             console.log('sending data is it connected', this.peerConnection.connected);
             if (!this.peerConnection.connected) {
+                this.notConnectedCount++;
+                if (this.notConnectedCount > this.notConnectedCountAllowed) {
+                    console.log('not connected count exceeded');
+                    this.notConnectedCount = 0;
+                    this.handleSendError('not connected count exceeded');
+                }
                 // not yet connected fail this 
                 console.log('not yet connected');
                 return false;
@@ -104,6 +112,7 @@ export class ClientPeerConnection extends BasePeerConnection {
 
     constructor(clientConnection: ClientConnection) {
         super(true); // Client is the initiator
+        console.log('123123 creating client peer connection');
         this.clientConnection = clientConnection;
     }
 

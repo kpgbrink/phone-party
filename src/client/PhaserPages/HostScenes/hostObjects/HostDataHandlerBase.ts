@@ -2,6 +2,7 @@ import { GameData, PlayerData } from "../../../../shared/data/Data";
 import socket from "../../../SocketConnection";
 import { hostConnections } from "../../../WebRTC/HostConnections";
 import { HostPeerConnection } from "../../../WebRTC/PeerConnection";
+import { persistentData } from "../../objects/PersistantData";
 
 export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, GameDataType extends GameData> {
 
@@ -74,17 +75,38 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         if (userId === null) {
             // Send data to all users
             let allSendsSuccessful = true;
-            hostConnections.playerConnections.forEach(connection => {
-                const success = connection.sendDataViaWebRTC({ data, type });
-                if (!success) {
-                    console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
-                    allSendsSuccessful = false;
+            // if the connection exists in the roomData, but not in the hostConnections, then it's a broken connection that must be sent through sockets
+            persistentData?.roomData?.users.forEach(user => {
+                const connection = hostConnections.playerConnections.find(conn => conn.clientId === user.id);
+                if (connection) {
+                    const success = connection.sendDataViaWebRTC({ data, type });
+                    if (!success) {
+                        console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
+                        allSendsSuccessful = false;
+                    }
+                } else {
+                    // console.log('connection not found for user', user);
+                    // socket.emit("dataToUser", userId, data.gameData, data.playerData);
+                    return false;
                 }
             });
+
+            // hostConnections.playerConnections.forEach(connection => {
+            //     const success = connection.sendDataViaWebRTC({ data, type });
+            //     if (!success) {
+            //         console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
+            //         allSendsSuccessful = false;
+            //     }
+            // });
             return allSendsSuccessful;
         } else {
             // Send data to a specific user
             const connection = hostConnections.playerConnections.find(conn => conn.clientId === userId);
+            // If connection does not exist send it through sockets
+            if (!connection) {
+                console.log('connection not found for user', userId);
+                socket.emit("dataToUser", userId, data.gameData, data.playerData);
+            }
             return connection ? connection.sendDataViaWebRTC({ data, type }) : false;
         }
     }
