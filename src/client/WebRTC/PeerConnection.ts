@@ -7,8 +7,8 @@ import { HostConnections } from "./HostConnections";
 class BasePeerConnection {
     dataHandler: (data: any) => void;
     peerConnection: Peer.Instance;
-    notConnectedCountAllowed = 2;
-    notConnectedCount = 0;
+    lastReconnectionAttemptTime: number | null = null;
+    reconnectionDelayMs = 2000; // 2 seconds (adjust as needed)
 
     constructor(initiator: boolean) {
         const options = { initiator: initiator };
@@ -76,15 +76,18 @@ class BasePeerConnection {
         try {
             console.log('sending data is it connected', this.peerConnection.connected);
             if (!this.peerConnection.connected) {
-                this.notConnectedCount++;
-                if (this.notConnectedCount > this.notConnectedCountAllowed) {
-                    console.log('not connected count exceeded');
-                    this.notConnectedCount = 0;
-                    this.handleSendError('not connected count exceeded');
+                const currentTime = Date.now();
+                if (this.lastReconnectionAttemptTime !== null) {
+                    const timeSinceLastAttempt = currentTime - this.lastReconnectionAttemptTime;
+                    if (timeSinceLastAttempt > this.reconnectionDelayMs) {
+                        
+                        this.handleSendError('not connected count exceeded');
+                    }
+                    // not yet connected fail this 
+                    console.log('not yet connected');
                 }
-                // not yet connected fail this 
-                console.log('not yet connected');
-                return false;
+                this.lastReconnectionAttemptTime = currentTime;
+                return false; 
             }
             this.peerConnection.send(data);
         } catch (e) {
