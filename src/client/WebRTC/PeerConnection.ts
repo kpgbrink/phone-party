@@ -80,14 +80,14 @@ class BasePeerConnection {
                 if (this.lastReconnectionAttemptTime !== null) {
                     const timeSinceLastAttempt = currentTime - this.lastReconnectionAttemptTime;
                     if (timeSinceLastAttempt > this.reconnectionDelayMs) {
-                        
+
                         this.handleSendError('not connected count exceeded');
                     }
                     // not yet connected fail this 
                     console.log('not yet connected');
                 }
                 this.lastReconnectionAttemptTime = currentTime;
-                return false; 
+                return false;
             }
             this.peerConnection.send(data);
         } catch (e) {
@@ -131,16 +131,9 @@ export class ClientPeerConnection extends BasePeerConnection {
     }
 
     onError(error: Error) {
-        console.error('Peer connection error:', error);
-
-        // Notify the user of the connection issue
-        // alert("A connection error has occurred. Trying to reconnect...");
-
-        // Try to reconnect every 2 seconds
-        setInterval(() => {
-            console.log('Attempting to recreate the peer connection...');
-            this.clientConnection.recreatePeerConnection();
-        }, 2000); // Attempt to reconnect every 2 seconds
+        console.error('Peer connection error:', error, 'hoping it will be recreated somehow else');
+        // console.log('Attempting to recreate the peer connection...');
+        // this.clientConnection.recreatePeerConnection();
     }
 
     handleSendError(error: any): void {
