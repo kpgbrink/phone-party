@@ -356,7 +356,11 @@ io.on('connection', (socket) => {
     socket.on('signaling-data-to-host', (data: any) => {
         console.log('got the signal heading to host');
         const hostUser = getRoomHost(user.room);
-        if (!hostUser?.socketId) return;
+        if (!hostUser?.socketId) {
+            console.log('no host user');
+            return;
+        }
+        console.log('got the signal sending to host', hostUser.socketId);
         io.to(hostUser.socketId).emit('signaling-data-to-host', data, user.id);
     });
 
