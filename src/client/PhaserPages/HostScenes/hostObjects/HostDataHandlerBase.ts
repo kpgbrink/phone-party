@@ -75,29 +75,25 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         if (userId === null) {
             // Send data to all users
             let allSendsSuccessful = true;
-            // if the connection exists in the roomData, but not in the hostConnections, then it's a broken connection that must be sent through sockets
-            persistentData?.roomData?.users.forEach(user => {
-                const connection = hostConnections.playerConnections.find(conn => conn.clientId === user.id);
-                if (connection) {
-                    const success = connection.sendDataViaWebRTC({ data, type });
-                    if (!success) {
-                        console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
-                        allSendsSuccessful = false;
-                    }
-                } else {
-                    // console.log('connection not found for user', user);
-                    // socket.emit("dataToUser", userId, data.gameData, data.playerData);
-                    return false;
+            // Check if there is any user for whom the connection is not found
+            const isMissingConnection = persistentData?.roomData?.users.some(user => 
+                !hostConnections.playerConnections.find(conn => conn.clientId === user.id)
+            );
+
+            if (isMissingConnection) {
+                console.log('Connection not found for at least one user');
+                allSendsSuccessful = false;
+                return false;
+            }
+
+            hostConnections.playerConnections.forEach(connection => {
+                const success = connection.sendDataViaWebRTC({ data, type });
+                if (!success) {
+                    console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
+                    allSendsSuccessful = false;
                 }
             });
 
-            // hostConnections.playerConnections.forEach(connection => {
-            //     const success = connection.sendDataViaWebRTC({ data, type });
-            //     if (!success) {
-            //         console.error(`Failed to send data via WebRTC to ${connection.clientId}`);
-            //         allSendsSuccessful = false;
-            //     }
-            // });
             return allSendsSuccessful;
         } else {
             // Send data to a specific user
