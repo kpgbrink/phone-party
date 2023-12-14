@@ -83,6 +83,7 @@ export abstract class
         const success = clientConnection.hostConnection.sendDataViaWebRTC({ type: dataType, data });
         if (!success) {
             console.error(`Failed to send ${dataType} via WebRTC`);
+            clientConnection.hostConnection.checkShouldRunHandleSendError('Failed to send data via WebRTC');
         }
         return success;
     }

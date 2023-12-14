@@ -7,8 +7,8 @@ import { HostConnections } from "./HostConnections";
 class BasePeerConnection {
     dataHandler: (data: any) => void;
     peerConnection: Peer.Instance;
-    lastReconnectionAttemptTime: number | null = null;
-    reconnectionDelayMs = 2000; // 2 seconds (adjust as needed)
+    lastHandleSendErrorTime: number = 0;
+    handleSendErrorReconnectionDelayMs = 2000; // 2 seconds (adjust as needed)
 
     constructor(initiator: boolean) {
         const options = { initiator: initiator };
@@ -76,17 +76,7 @@ class BasePeerConnection {
         try {
             console.log('sending data is it connected', this.peerConnection.connected);
             if (!this.peerConnection.connected) {
-                const currentTime = Date.now();
-                if (this.lastReconnectionAttemptTime !== null) {
-                    const timeSinceLastAttempt = currentTime - this.lastReconnectionAttemptTime;
-                    if (timeSinceLastAttempt > this.reconnectionDelayMs) {
-
-                        this.handleSendError('not connected count exceeded');
-                    }
-                    // not yet connected fail this 
-                    console.log('not yet connected');
-                }
-                this.lastReconnectionAttemptTime = currentTime;
+                this.checkShouldRunHandleSendError('not connected count exceeded');
                 return false;
             }
             this.peerConnection.send(data);
@@ -94,10 +84,23 @@ class BasePeerConnection {
             // console.error('Error sending data:', e);
             // Handle the error or retry logic here
             console.log('failed to send data let fix that');
-            this.handleSendError(e);
+            this.checkShouldRunHandleSendError(e);
             throw e;
         }
         return true;
+    }
+
+    checkShouldRunHandleSendError(error: any) {
+        console.log('checkShouldRunHandleSendError');
+        const currentTime = Date.now();
+        const timeSinceLastAttempt = currentTime - this.lastHandleSendErrorTime;
+        if (timeSinceLastAttempt > this.handleSendErrorReconnectionDelayMs) {
+            console.log('enough time has passed since last attempt');
+            this.handleSendError(error);
+            this.lastHandleSendErrorTime = currentTime;
+        } else {
+            console.log('not enough time has passed since last attempt');
+        }
     }
 
     handleSendError(error: any) {
@@ -133,11 +136,10 @@ export class ClientPeerConnection extends BasePeerConnection {
     onError(error: Error) {
         console.error('Peer connection error:', error, 'hoping it will be recreated somehow else');
         // console.log('Attempting to recreate the peer connection...');
-        // this.clientConnection.recreatePeerConnection();
     }
 
     handleSendError(error: any): void {
-        console.error('Error sending data:', error);
+        console.error('Error sending data: RECREATE THE CONNECTION', error);
         // Handle the error or retry logic here
         console.log('this.clientConnection', this.clientConnection);
         try {
@@ -178,7 +180,7 @@ export class HostPeerConnection extends BasePeerConnection {
     onClose() {
         console.log(`Connection closed for client ${this.clientId}`);
         // Filter out the closed connection
-        this.hostConnections.removeConnection(this.clientId);
+        this.hostConnections?.removeConnection(this.clientId);
         // Clean up the connection
         this.destroy();
     }
@@ -190,7 +192,7 @@ export class HostPeerConnection extends BasePeerConnection {
     handleSendError(error: any): void {
         console.error('Error sending data:', error);
         // Handle the error or retry logic here
-        this.hostConnections.removeConnection(this.clientId);
+        this.hostConnections?.removeConnection(this.clientId);
         this.destroy()
     }
 }
