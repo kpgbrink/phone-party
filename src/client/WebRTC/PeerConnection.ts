@@ -7,8 +7,8 @@ import { HostConnections } from "./HostConnections";
 class BasePeerConnection {
     dataHandler: (data: any) => void;
     peerConnection: Peer.Instance;
-    lastHandleSendErrorTime: number = 0;
-    handleSendErrorReconnectionDelayMs = 2000; // 2 seconds (adjust as needed)
+    lastHandleSendErrorTime: number = Date.now();
+    handleSendErrorReconnectionDelayMs = 4000; // 2 seconds (adjust as needed)
 
     constructor(initiator: boolean) {
         const options = { initiator: initiator };
@@ -94,6 +94,7 @@ class BasePeerConnection {
         console.log('checkShouldRunHandleSendError');
         const currentTime = Date.now();
         const timeSinceLastAttempt = currentTime - this.lastHandleSendErrorTime;
+        console.log('timeSinceLastAttempt', timeSinceLastAttempt, 'this.handleSendErrorReconnectionDelayMs', this.handleSendErrorReconnectionDelayMs);
         if (timeSinceLastAttempt > this.handleSendErrorReconnectionDelayMs) {
             console.log('enough time has passed since last attempt');
             this.handleSendError(error);
