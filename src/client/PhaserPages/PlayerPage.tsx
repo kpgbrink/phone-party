@@ -3,7 +3,9 @@ import { LinearProgress } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../AppContext";
-import clientConnection from "../WebRTC/ClientConnection";
+import clientConnection, {
+  useClientConnections,
+} from "../WebRTC/ClientConnection";
 import { ClientPeerConnection } from "../WebRTC/PeerConnection";
 import PhaserWrapper from "./PhaserWrapper";
 import PlayerGamesListMenu from "./PlayerPage/PlayerGamesListMenu";
@@ -25,6 +27,9 @@ export default function PlayerPage() {
   // add state to keep track if the room exists
   const [roomExists, setRoomExists] = useState(false);
 
+  // Call the useClientConnections function
+  useClientConnections();
+
   useEffect(() => {
     if (!userId) {
       throw new Error("userId is not defined");
@@ -32,7 +37,8 @@ export default function PlayerPage() {
     const userIdListener = (existingUserId: string) => {
       // make clientConnection.hostCOnnection if it does not exist
       clientConnection.hostConnection =
-        clientConnection.hostConnection || new ClientPeerConnection(clientConnection);
+        clientConnection.hostConnection ||
+        new ClientPeerConnection(clientConnection);
       setRoomExists(true);
       if (existingUserId !== userId) {
         persistentData.myUserId = existingUserId;

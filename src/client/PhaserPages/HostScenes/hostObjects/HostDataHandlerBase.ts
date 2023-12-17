@@ -76,12 +76,20 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
             // Send data to all users
             let allSendsSuccessful = true;
             // Check if there is any user for whom the connection is not found
-            const isMissingConnection = persistentData?.roomData?.users.some(user => 
+            const isMissingConnection = persistentData?.roomData?.users.some(user =>
                 !hostConnections.playerConnections.find(conn => conn.clientId === user.id)
             );
 
             if (isMissingConnection) {
                 console.log('Connection not found for at least one user');
+                allSendsSuccessful = false;
+                return false;
+            }
+
+            // check if any connection is not connected
+            const isNotConnected = hostConnections.playerConnections.some(conn => !conn.peerConnection.connected);
+            if (isNotConnected) {
+                console.log('At least one connection is not connected');
                 allSendsSuccessful = false;
                 return false;
             }

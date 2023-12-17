@@ -1,4 +1,5 @@
 import Peer from "simple-peer";
+import { persistentData } from "../PhaserPages/objects/PersistantData";
 import socket from "../SocketConnection";
 import { ClientConnection } from "./ClientConnection";
 import { HostConnections } from "./HostConnections";
@@ -191,6 +192,13 @@ export class HostPeerConnection extends BasePeerConnection {
     }
 
     handleSendError(error: any): void {
+        // only delete itself if the player id is not in the connection list anymore
+        persistentData?.roomData?.users.some(user => {
+            if (user.id === this.clientId) {
+                console.log('player still in room, not deleting connection');
+                return true;
+            }
+        });
         console.error('Error sending data:', error);
         // Handle the error or retry logic here
         this.hostConnections?.removeConnection(this.clientId);

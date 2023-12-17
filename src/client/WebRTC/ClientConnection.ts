@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import socket from "../SocketConnection";
 import { ClientPeerConnection } from "./PeerConnection";
 
@@ -5,7 +6,7 @@ export class ClientConnection {
     hostConnection: ClientPeerConnection | null = null;
     onConnectionReady: (() => void) | null = null;
 
-    createClientPeerConnection() {
+    createClientPeerConnection = () => {
         console.log('creating client peer connection');
         this.hostConnection = new ClientPeerConnection(this);
         console.log('clientConnection is now', this);
@@ -14,12 +15,11 @@ export class ClientConnection {
         }
     }
 
-    recreatePeerConnection() {
+    recreatePeerConnection = () => {
         console.log('recreating peer connection');
         // Clean up the existing connection before creating a new one
-        if (this.hostConnection) {
+        if (this.hostConnection && !this.hostConnection.peerConnection.destroyed) {
             this.hostConnection.peerConnection.destroy();
-            this.hostConnection = null;
         }
         // Create a new peer connection instance
         this.hostConnection = new ClientPeerConnection(clientConnection);
@@ -30,7 +30,7 @@ export class ClientConnection {
         }
     }
 
-    setOnConnectionReadyCallback(callback: () => void) {
+    setOnConnectionReadyCallback = (callback: () => void) => {
         this.onConnectionReady = callback;
     }
 }
@@ -63,5 +63,16 @@ export const startListeningForClientConnections = () => {
 }
 
 export const closeListeningForClientConnections = () => {
+    console.log('close listening for client connections');
     socket.off('signaling-data-to-client', onSignalingData);
+}
+
+// create react custom hook to listen for connections
+export const useClientConnections = () => {
+    useEffect(() => {
+        startListeningForClientConnections();
+        return () => {
+            closeListeningForClientConnections();
+        }
+    }, []);
 }

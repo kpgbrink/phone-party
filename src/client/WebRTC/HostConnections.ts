@@ -5,16 +5,30 @@ import { HostPeerConnection } from "./PeerConnection";
 export class HostConnections {
     playerConnections: HostPeerConnection[] = [];
 
-    addConnection(connection: HostPeerConnection) {
+    addConnection = (connection: HostPeerConnection) => {
         this.playerConnections.push(connection);
     }
 
-    removeConnection(clientId: string) {
-        const connection = this.playerConnections.find(conn => conn.clientId === clientId);
-        if (connection) {
-            connection.removeAllListeners();
+    removeConnection = (clientId: string) => {
+        // Find the index of the connection to be removed
+        const index = this.playerConnections.findIndex(conn => conn.clientId === clientId);
+
+        // If the connection is found
+        if (index !== -1) {
+            console.log('123123 removing connection', clientId);
+            // Optionally, perform any cleanup if necessary
+            this.playerConnections[index].removeAllListeners();
+
+            // Remove the connection from the array
+            this.playerConnections.splice(index, 1);
+
+            // Log for debugging (consider using a proper logging framework)
+            console.log(`123123 Connection with clientId ${clientId} removed.`);
+            console.log('123123 hostConnections', this.playerConnections);
+        } else {
+            // Handle the case where the connection is not found
+            console.warn(`Connection with clientId ${clientId} not found.`);
         }
-        this.playerConnections = this.playerConnections.filter(conn => conn.clientId !== clientId);
     }
 }
 
@@ -41,6 +55,9 @@ const onSignalingData = (data: any, clientId: string) => {
             conn.peerConnection.destroy();
             conn = new HostPeerConnection(clientId, hostConnections);
             hostConnections.addConnection(conn);
+        } else {
+            // Existing connection found, and peer is not destroyed
+            console.log('3132 Using existing host connection for client', clientId);
         }
         return conn;
     })();
@@ -56,11 +73,13 @@ const onSignalingData = (data: any, clientId: string) => {
 
 
 export const startListeningForHostConnections = () => {
+    console.log('543 start listening for host connections');
     socket.on('signaling-data-to-host', onSignalingData);
 }
 
 // const countsa = 0;
 export const closeListeningForHostConnections = () => {
+    console.log('543 close listening for host connections');
     socket.off('signaling-data-to-host', onSignalingData);
 }
 
