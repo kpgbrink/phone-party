@@ -7,6 +7,7 @@ import { persistentData } from "../../objects/PersistantData";
 export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, GameDataType extends GameData> {
 
     create() {
+        hostConnections.hostDataHandlerBaseInstance = this;
         this.listenForGameData();
         this.listenForPlayerData();
         this.listenForData();
@@ -34,6 +35,12 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         hostConnections.playerConnections.forEach(connection => {
             this.setupDataListener(connection);
         });
+    }
+
+    reinitializeDataListeners() {
+        // This method can be called on reconnection or page refresh
+        // to ensure all listeners are correctly set up.
+        this.initializeDataListenersForExistingConnections();
     }
 
     setupDataListener(connection: HostPeerConnection) {

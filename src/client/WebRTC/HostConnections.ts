@@ -1,12 +1,15 @@
 import { useEffect } from "react";
+import { HostDataHandlerBase } from "../PhaserPages/HostScenes/hostObjects/HostDataHandlerBase";
 import socket from "../SocketConnection";
 import { HostPeerConnection } from "./PeerConnection";
 
 export class HostConnections {
+    hostDataHandlerBaseInstance: HostDataHandlerBase<any, any> | null = null;
     playerConnections: HostPeerConnection[] = [];
 
     addConnection = (connection: HostPeerConnection) => {
         this.playerConnections.push(connection);
+        this.reinitializeDataListeners();
     }
 
     removeConnection = (clientId: string) => {
@@ -29,6 +32,16 @@ export class HostConnections {
             // Handle the case where the connection is not found
             console.warn(`Connection with clientId ${clientId} not found.`);
         }
+    }
+
+    reinitializeDataListeners() {
+        // Assuming you have a reference to the instance of HostDataHandlerBase
+        // Call the method to re-setup data listeners
+        if (!this.hostDataHandlerBaseInstance) {
+            console.error('123123 hostDataHandlerBaseInstance is null');
+            return;
+        }
+        this.hostDataHandlerBaseInstance?.reinitializeDataListeners();
     }
 }
 

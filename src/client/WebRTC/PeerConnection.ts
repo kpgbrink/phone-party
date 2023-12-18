@@ -162,6 +162,12 @@ export class HostPeerConnection extends BasePeerConnection {
         this.hostConnections = hostConnections;
     }
 
+    onConnect(): void {
+        console.log(`Connected to client ${this.clientId}`);
+        // Reinitialize data listeners on connection
+        this.hostConnections.reinitializeDataListeners();
+    }
+
     handleSignal(data: any) {
         console.log('host signaling data', data);
         socket.emit('signaling-data-to-client', data, this.clientId);
