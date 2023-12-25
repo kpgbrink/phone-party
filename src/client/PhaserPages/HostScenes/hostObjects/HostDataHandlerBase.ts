@@ -55,14 +55,15 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
                         break;
                     }
                     case 'gameData': {
-                        this.onGameDataReceived(connection.clientId, parsedData.data, null, false);
+                        const { gameData, updateGameData } = parsedData.data;
+                        this.onGameDataReceived(connection.clientId, gameData, null, updateGameData);
                         break;
                     }
                     case 'playerAndGameData': {
                         // Encapsulate the case in a block to use const/let
-                        const { playerData, gameData } = parsedData.data;
+                        const { playerData, gameData, updateGameData } = parsedData.data;
                         this.onPlayerDataReceived(connection.clientId, playerData, gameData);
-                        this.onGameDataReceived(connection.clientId, gameData, playerData, true);
+                        this.onGameDataReceived(connection.clientId, gameData, playerData, updateGameData);
                         break;
                     }
                     default:

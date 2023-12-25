@@ -149,6 +149,7 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
     }
 
     override onGameDataReceived(userId: string, gameData: Partial<ThirtyOneCardGameData>, playerData: Partial<ThirtyOnePlayerCardHandData> | null, updateGameData: boolean): void {
+        console.log('onGameDataReceived end', gameData, playerData, updateGameData);
         this.updateDealing(gameData, playerData, updateGameData);
     }
 
@@ -161,8 +162,10 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
 
     updateDealing(gameData: Partial<ThirtyOneCardGameData>, playerData: Partial<ThirtyOnePlayerCardHandData> | null, updateGameData: boolean): void {
         if (!updateGameData) return;
+        console.log('gameData', gameData);
         if (gameData.startDealing) {
             // deal the cards
+            console.log('start dealing');
             this.timerNextRound.currentTime = 0;
         }
     }

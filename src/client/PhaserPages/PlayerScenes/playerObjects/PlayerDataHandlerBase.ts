@@ -127,7 +127,8 @@ export abstract class
 
     sendGameData(updateGameData: boolean = false) {
         const gameDataToSend = this.getGameDataToSend();
-        const success = this.trySendDataViaWebRTC(gameDataToSend, 'gameData');
+        const combinedData = { gameData: gameDataToSend, updateGameData };
+        const success = this.trySendDataViaWebRTC(combinedData, 'gameData');
         if (!success) {
             console.log('Sending game data via sockets');
             socket.emit("gameDataToHost", gameDataToSend, updateGameData);
@@ -153,7 +154,7 @@ export abstract class
     sendData(updateGameData: boolean = false) {
         const gameDataToSend = this.getGameDataToSend();
         const playerDataToSend = this.getPlayerDataToSend();
-        const combinedData = { gameData: gameDataToSend, playerData: playerDataToSend };
+        const combinedData = { gameData: gameDataToSend, playerData: playerDataToSend, updateGameData };
 
         const success = this.trySendDataViaWebRTC(combinedData, 'playerAndGameData');
         if (!success) {
