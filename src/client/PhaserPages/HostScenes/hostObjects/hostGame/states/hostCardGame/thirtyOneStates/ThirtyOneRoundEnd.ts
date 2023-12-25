@@ -15,6 +15,8 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
     // timer for starting the next round
     timerNextRound: CountdownTimer = new CountdownTimer(this.timeToNextRound);
 
+    timerText: Phaser.GameObjects.Text | null = null;
+
     constructor(hostGame: ThirtyOneGame) {
         super(hostGame);
         this.hostGame = hostGame;
@@ -32,6 +34,18 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
             cardContainer.setFaceUp(true);
         });
         this.calculateScores();
+        // add a countdown timer to the next round basically showing timerToNextRound current value
+        this.timerText = this.hostGame.hostScene.add.text(2160, 600, this.getTimerText(), { fontSize: '68px', color: 'white' });
+        this.timerText.setOrigin(0.5, 0.5);
+    }
+
+    getTimerText() {
+        return `Next Deal Timer: ${Math.floor(this.timerNextRound.currentTime)}`;
+    }
+
+    updateTimerText() {
+        console.log('update timer');
+        this.timerText?.setText(this.getTimerText());
     }
 
     update(time: number, delta: number): HostGameState<ThirtyOnePlayerCardHandData, ThirtyOneCardGameData> | null {
@@ -40,6 +54,7 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         if (this.timerNextRound.isDone()) {
             this.hostGame.changeState(new StartGettingReadyToShuffle(this.hostGame));
         }
+        this.updateTimerText();
         return null;
     }
 
@@ -170,8 +185,18 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         }
     }
 
+    destroyTimerText() {
+        if (!this.timerText)
+            return;
+        this.timerText.visible = false;
+        this.timerText.destroy();
+        this.timerText = null;
+    }
+
     exit() {
         this.hostGame.gameData.knockPlayerId = null;
         this.hostGame.gameData.thirtyOnePlayerId = null;
+        // delete the timer text
+        this.destroyTimerText();
     }
 }
