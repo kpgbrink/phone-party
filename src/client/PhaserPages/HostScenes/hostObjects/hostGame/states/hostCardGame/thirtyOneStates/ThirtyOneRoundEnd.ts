@@ -33,10 +33,11 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
             cardContainer.inHandFaceUp = true;
             cardContainer.setFaceUp(true);
         });
-        this.calculateScores();
         // add a countdown timer to the next round basically showing timerToNextRound current value
         this.timerText = this.hostGame.hostScene.add.text(2160, 600, this.getTimerText(), { fontSize: '68px', color: 'white' });
         this.timerText.setOrigin(0.5, 0.5);
+
+        this.calculateScores();
     }
 
     getTimerText() {
@@ -186,6 +187,7 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
     }
 
     destroyTimerText() {
+        console.log('destroy timer text', this.timerText);
         if (!this.timerText)
             return;
         this.timerText.visible = false;
