@@ -13,6 +13,7 @@ export abstract class PlayerCardHand
     extends PlayerDataHandler<PlayerCardHandDataType, CardGameDataType>
 {
     dealButton: MenuButton | null = null;
+    requestDealButton: MenuButton | null = null;
     hideShowCardButton: MenuButton | null = null;
     cards: Cards;
     scene: PlayerScene;
@@ -201,7 +202,16 @@ export abstract class PlayerCardHand
         if (gameData.waitingForDeal === undefined) return
         const meDealing = gameData.playerDealerId === persistentData.myUserId && gameData.waitingForDeal;
         this.dealButton?.setVisible(meDealing);
+        // if not me dealing let me request deal
+        console.log('meDealing', meDealing);
+        console.log('request deal', this.requestDealButton);
+        if (gameData.waitingForDeal) {
+            this.requestDealButton?.setVisible(!meDealing);
+        } else {
+            this.requestDealButton?.setVisible(false);
+        }
     }
+
     // ------------------------------------ Data End ------------------------------------
 
     cardsInHand() {
@@ -245,8 +255,9 @@ export abstract class PlayerCardHand
             });
         });
 
-        // create deal button
         const screenDimensions = getScreenDimensions(this.scene);
+
+        // create deal button
         this.dealButton = new MenuButton(screenDimensions.width / 2, 100, this.scene);
         this.dealButton.setInteractive();
         this.dealButton.setText('DEAL');
@@ -257,6 +268,19 @@ export abstract class PlayerCardHand
         });
         this.dealButton.setVisible(false);
         this.scene.add.existing(this.dealButton);
+
+        // create request deal button alternative to deal button kinda
+        this.requestDealButton = new MenuButton(screenDimensions.width / 2, 100, this.scene);
+        this.requestDealButton.setInteractive();
+        this.requestDealButton.setText('Request Deal');
+        this.requestDealButton.on('pointerdown', () => {
+            // this.requestDealButton?.setVisible(false);
+            this.playerData.requestDeal = true;
+            this.sendPlayerData();
+            this.playerData.requestDeal = false;
+        });
+        this.requestDealButton.setVisible(false);
+        this.scene.add.existing(this.requestDealButton);
 
         // create hide card/ show card button
         this.hideShowCardButton = new MenuButton(200, screenDimensions.height - 200, this.scene);

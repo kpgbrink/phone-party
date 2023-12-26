@@ -6,6 +6,7 @@ export class PlayerCardHandData extends PlayerData {
     pickUpFaceDownCardIds: number[] = [];
     pickUpFaceUpCardIds: number[] = [];
     cardIds: number[] = [];
+    requestDeal: boolean = false;
 }
 
 export class CardGameData extends GameData {

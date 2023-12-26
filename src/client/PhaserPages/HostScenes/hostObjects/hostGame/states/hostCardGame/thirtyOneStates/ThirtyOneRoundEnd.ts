@@ -37,7 +37,7 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         this.timerText = this.hostGame.hostScene.add.text(2160, 600, this.getTimerText(), { fontSize: '68px', color: 'white' });
         this.timerText.setOrigin(0.5, 0.5);
 
-        this.calculateScores();
+        this.calculateAndHandleScores();
     }
 
     getTimerText() {
@@ -60,7 +60,7 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
     }
 
     // calculate the score for each player
-    calculateScores() {
+    calculateAndHandleScores() {
         // calculate the score for each player
         this.hostGame.hostUserAvatars?.userAvatarContainers.forEach(userAvatar => {
             const cardContainers = this.hostGame.cards.cardContainers.filter(c => c.userHandId === userAvatar.user.id);
@@ -162,6 +162,15 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         if (!suitAndScore) return { score: 0, cardsThatMatter: cardContainers };
         const cardsInSuit = cardContainers.filter(c => c.cardContent.suit === suitAndScore.suit);
         return { score: highestScore, cardsThatMatter: cardsInSuit };
+    }
+
+    override onPlayerDataReceived(userId: string, playerData: Partial<ThirtyOnePlayerCardHandData>, gameData: Partial<ThirtyOneCardGameData> | null): void {
+        console.log('onPlayerDataReceived end', playerData, gameData);
+        // If a user request dealing blurt it out and set the timer / 1.5
+        console.log('playerData.requestDeal', playerData.requestDeal);
+        if (playerData.requestDeal) {
+            this.timerNextRound.currentTime /= 1.5;
+        }
     }
 
     override onGameDataReceived(userId: string, gameData: Partial<ThirtyOneCardGameData>, playerData: Partial<ThirtyOnePlayerCardHandData> | null, updateGameData: boolean): void {
