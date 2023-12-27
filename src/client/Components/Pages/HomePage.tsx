@@ -143,4 +143,8 @@ export class HostMainMenuDataHandler extends HostDataHandler<
 
     this.sendGameData();
   }
+
+  override onInputReceived(clientId: string, input: any): void {
+    // nothing needed on this page
+  }
 }

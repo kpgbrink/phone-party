@@ -1,3 +1,4 @@
+import { CardInputData } from "../../../../../../../../shared/data/datas/CardData";
 import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "../../../../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import { CountdownTimer } from "../../../../../../objects/CountdownTimer";
 import CardContainer from "../../../../../../objects/items/CardContainer";
@@ -165,12 +166,6 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
     }
 
     override onPlayerDataReceived(userId: string, playerData: Partial<ThirtyOnePlayerCardHandData>, gameData: Partial<ThirtyOneCardGameData> | null): void {
-        console.log('onPlayerDataReceived end', playerData, gameData);
-        // If a user request dealing blurt it out and set the timer / 1.5
-        console.log('playerData.requestDeal', playerData.requestDeal);
-        if (playerData.requestDeal) {
-            this.timerNextRound.currentTime /= 1.5;
-        }
     }
 
     override onGameDataReceived(userId: string, gameData: Partial<ThirtyOneCardGameData>, playerData: Partial<ThirtyOnePlayerCardHandData> | null, updateGameData: boolean): void {
@@ -183,6 +178,15 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         gameData.waitingForDeal = true;
         gameData.roundOver = true;
         return gameData;
+    }
+
+    override onInputReceived(clientId: string, input: Partial<CardInputData>): void {
+        console.log('onInputReceived end', clientId, input);
+        if (input.requestDeal) {
+            // Add your code here
+            this.timerNextRound.currentTime /= 1.5;
+
+        }
     }
 
     updateDealing(gameData: Partial<ThirtyOneCardGameData>, playerData: Partial<ThirtyOnePlayerCardHandData> | null, updateGameData: boolean): void {

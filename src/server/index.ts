@@ -311,6 +311,12 @@ io.on('connection', (socket) => {
         io.to(hostUser.socketId).emit('dataToHost', user.id, gameData, playerData, updateGameData);
     });
 
+    socket.on('inputDataToHost', (input: any) => {
+        const hostUser = getRoomHost(user.room);
+        if (!hostUser?.socketId) return;
+        io.to(hostUser.socketId).emit('inputDataToHost', user.id, input);
+    });
+
     socket.on('dataToUser', (userId: string, gameData: Partial<GameData>, playerData: Partial<PlayerData>) => {
         const userTo = getRoom(user.room)?.users.find(u => u.id === userId);
         if (!userTo?.socketId) return;

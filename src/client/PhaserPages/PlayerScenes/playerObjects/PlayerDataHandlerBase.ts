@@ -1,11 +1,12 @@
-import { GameData, PlayerData } from "../../../../shared/data/Data";
+import { GameData, InputData, PlayerData } from "../../../../shared/data/Data";
 import socket from "../../../SocketConnection";
 import clientConnection from "../../../WebRTC/ClientConnection";
 
 export abstract class
     PlayerDataHandlerBase
     <PlayerDataType extends PlayerData,
-        GameDataType extends GameData>
+        GameDataType extends GameData,
+        InputDataType extends InputData>
 {
     scene: Phaser.Scene;
 
@@ -103,7 +104,8 @@ export abstract class
 
     sendPlayerData() {
         const playerDataToSend = this.getPlayerDataToSend();
-        const success = this.trySendDataViaWebRTC(playerDataToSend, 'playerData');
+        const combinedData = { playerData: playerDataToSend };
+        const success = this.trySendDataViaWebRTC(combinedData, 'playerData');
         if (!success) {
             console.log('Sending player data via sockets');
             socket.emit("playerDataToHost", playerDataToSend);
@@ -160,6 +162,14 @@ export abstract class
         if (!success) {
             console.log('Sending combined data via sockets');
             socket.emit("dataToHost", gameDataToSend, playerDataToSend, updateGameData);
+        }
+    }
+
+    sendInputData(inputData: Partial<InputDataType>) {
+        const success = this.trySendDataViaWebRTC({ input: inputData }, 'input');
+        if (!success) {
+            console.log('Sending input data via sockets');
+            socket.emit("inputDataToHost", inputData);
         }
     }
 

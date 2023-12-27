@@ -11,6 +11,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         this.listenForGameData();
         this.listenForPlayerData();
         this.listenForData();
+        this.listenForInputData();
 
         this.socketListenForGetUserStateRequest();
         this.socketListenForGetGameStateRequest();
@@ -26,6 +27,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         socket.removeListener("getPlayerData");
         socket.removeListener("getGameData");
         socket.removeListener("getData");
+        socket.removeListener("inputDataToHost");
     }
 
     // WEBRTC --------------------
@@ -51,7 +53,8 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
                 console.log('received data via WebRTC:', parsedData);
                 switch (parsedData.type) {
                     case 'playerData': {
-                        this.onPlayerDataReceived(connection.clientId, parsedData.data, null);
+                        const { playerData } = parsedData.data;
+                        this.onPlayerDataReceived(connection.clientId, playerData, null);
                         break;
                     }
                     case 'gameData': {
@@ -66,6 +69,11 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
                         this.onGameDataReceived(connection.clientId, gameData, playerData, updateGameData);
                         break;
                     }
+                    case 'input': {
+                        const { input } = parsedData.data;
+                        this.onInputReceived(connection.clientId, input);
+                        break;
+                    }
                     default:
                         console.error(`Unknown data type received from client ${connection.clientId}:`, parsedData);
                         break;
@@ -77,6 +85,8 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
 
         connection.setDataHandler(dataHandler);
     }
+
+    abstract onInputReceived(clientId: string, input: any): void;
 
     // --- end HostConnections ---
     trySendDataViaWebRTC(userId: string | null, data: any, type: string): boolean {
@@ -209,6 +219,12 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
             console.log('failed had to use sockets to send data');
             socket.emit("dataToUser", userId, gameDataToSend, playerDataToSend);
         }
+    }
+
+    listenForInputData() {
+        socket.on("inputDataToHost", (userId: string, input: any) => {
+            this.onInputReceived(userId, input);
+        });
     }
     // --- end data ---
 }

@@ -1,10 +1,11 @@
-import { GameData, PlayerData } from "../../../../shared/data/Data";
+import { GameData, InputData, PlayerData } from "../../../../shared/data/Data";
 import { PlayerDataHandlerBase } from "./PlayerDataHandlerBase";
 
 export abstract class
     PlayerDataHandler
     <PlayerDataType extends PlayerData,
-        GameDataType extends GameData> extends PlayerDataHandlerBase<PlayerDataType, GameDataType> {
+        GameDataType extends GameData,
+        InputDataType extends InputData> extends PlayerDataHandlerBase<PlayerDataType, GameDataType, InputDataType> {
 
     abstract playerData: PlayerDataType;
     abstract gameData: GameDataType;

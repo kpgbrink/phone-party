@@ -21,5 +21,7 @@ export abstract class HostDataHandler<PlayerDataType extends PlayerData, GameDat
     // Override this
     abstract onGameDataReceived(userId: string, gameData: Partial<GameDataType>, playerData: Partial<PlayerDataType> | null, updateGameData: boolean): void
 
+    abstract onInputReceived(clientId: string, input: any): void;
+
     // --- end data ---
 }

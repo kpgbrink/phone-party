@@ -27,6 +27,11 @@ export abstract class HostGameState<PlayerDataType extends PlayerData, GameDataT
     }
 
     onGameDataReceived(userId: string, gameData: Partial<GameDataType>, playerData: Partial<PlayerDataType> | null, updateGameData: boolean) { }
+
+    // InputData --------------------
+    onInputReceived(clientId: string, input: any) {
+        return;
+    }
     // --------------------
 
     abstract enter(): void;

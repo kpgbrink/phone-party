@@ -1,4 +1,4 @@
-import { GameData, PlayerData } from "../Data.js";
+import { GameData, InputData, PlayerData } from "../Data.js";
 
 export class PlayerCardHandData extends PlayerData {
     pickUpTo: number | null = null;
@@ -6,7 +6,6 @@ export class PlayerCardHandData extends PlayerData {
     pickUpFaceDownCardIds: number[] = [];
     pickUpFaceUpCardIds: number[] = [];
     cardIds: number[] = [];
-    requestDeal: boolean = false;
 }
 
 export class CardGameData extends GameData {
@@ -16,4 +15,8 @@ export class CardGameData extends GameData {
     startDealing: boolean = false;
     waitingForDeal: boolean = false;
     roundOver: boolean = false;
+}
+
+export class CardInputData extends InputData {
+    requestDeal: boolean = false;
 }

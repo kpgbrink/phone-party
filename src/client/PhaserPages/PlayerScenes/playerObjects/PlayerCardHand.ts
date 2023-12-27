@@ -1,4 +1,4 @@
-import { CardGameData, PlayerCardHandData } from "../../../../shared/data/datas/CardData";
+import { CardGameData, CardInputData, PlayerCardHandData } from "../../../../shared/data/datas/CardData";
 import { Cards } from "../../objects/Cards";
 import CardContainer from "../../objects/items/CardContainer";
 import MenuButton from "../../objects/MenuButton";
@@ -9,8 +9,9 @@ import PlayerScene from "./PlayerScene";
 
 export abstract class PlayerCardHand
     <PlayerCardHandDataType extends PlayerCardHandData,
-        CardGameDataType extends CardGameData>
-    extends PlayerDataHandler<PlayerCardHandDataType, CardGameDataType>
+        CardGameDataType extends CardGameData,
+        InputDataType extends CardInputData>
+    extends PlayerDataHandler<PlayerCardHandDataType, CardGameDataType, InputDataType>
 {
     dealButton: MenuButton | null = null;
     requestDealButton: MenuButton | null = null;
@@ -275,9 +276,9 @@ export abstract class PlayerCardHand
         this.requestDealButton.setText('Request Deal');
         this.requestDealButton.on('pointerdown', () => {
             // this.requestDealButton?.setVisible(false);
-            this.playerData.requestDeal = true;
-            this.sendPlayerData();
-            this.playerData.requestDeal = false;
+            // not sure about this method.. Kinda janky
+            const inputData: Partial<InputDataType> = { requestDeal: true } as Partial<InputDataType>;
+            this.sendInputData(inputData);
         });
         this.requestDealButton.setVisible(false);
         this.scene.add.existing(this.requestDealButton);
