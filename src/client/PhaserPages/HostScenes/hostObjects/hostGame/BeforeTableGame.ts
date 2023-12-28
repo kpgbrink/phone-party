@@ -24,7 +24,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
     preload() {
         super.preload();
         loadIfImageNotLoaded(this.scene, 'checkmark', 'assets/ui/checkmark.png');
-        loadIfImageNotLoaded(this.scene, 'table', 'assets/TableScaled.png');
+        loadIfImageNotLoaded(this.scene, 'table', 'assets/tableGames/TableScaled.png');
     }
 
     create() {

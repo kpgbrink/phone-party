@@ -14,15 +14,15 @@ export class Cards {
     }
 
     public static preload(scene: Phaser.Scene) {
-        scene.load.atlas('cards', 'assets/cards/cards.png', 'assets/cards/cards.json');
+        scene.load.atlas('cards', 'assets/tableGames/cards/cards.png', 'assets/tableGames/cards/cards.json');
     }
 
     // default cards to create. the whole deck excluding jokers
     create(x: number, y: number) {
         // create the cards
         let i: number = 0;
-        for (let suite of suites) {
-            for (let card of cards) {
+        for (const suite of suites) {
+            for (const card of cards) {
                 const cardContainer = new CardContainer(this.scene, x, y, i++, suite, card);
                 this.cardContainers.push(cardContainer);
                 this.scene.add.existing(cardContainer);

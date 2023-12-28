@@ -29,7 +29,7 @@ export class ThirtyOneGame
 
     preload() {
         super.preload();
-        loadIfImageNotLoaded(this.hostScene, 'bluePokerChip', 'assets/pokerChips/BluePokerChip.png');
+        loadIfImageNotLoaded(this.hostScene, 'bluePokerChip', 'assets/tableGames/pokerChips/BluePokerChip.png');
     }
 
     // override this maybe

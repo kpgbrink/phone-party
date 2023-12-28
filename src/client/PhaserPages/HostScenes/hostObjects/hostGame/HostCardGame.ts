@@ -42,7 +42,7 @@ export abstract class HostCardGame<
         Cards.preload(this.hostScene);
 
         // load player turn image
-        loadIfImageNotLoaded(this.hostScene, "playerTurnIndicator", "assets/playerTurnIndicator.png");
+        loadIfImageNotLoaded(this.hostScene, "playerTurnIndicator", "assets/tableGames/playerTurnIndicator.png");
     }
 
     abstract createGameStateAfterDealing(): HostGameState<PlayerDataType, GameDataType>;
