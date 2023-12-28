@@ -28,6 +28,7 @@ export class BringCardsToDealer<
         this.hostGame.gameData.playerTurnId = null;
         // start moving cards to random dealer
         this.startMovingCardsToDealer();
+        this.hostGame.movePlayerDealerIndicatorToPlayer();
     }
 
     startMovingCardsToDealer() {

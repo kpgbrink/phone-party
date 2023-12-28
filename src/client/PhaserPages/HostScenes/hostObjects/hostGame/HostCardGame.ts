@@ -1,6 +1,7 @@
 import { CardGameData, PlayerCardHandData } from "../../../../../shared/data/datas/CardData";
 import { Cards } from "../../../objects/Cards";
 import CardContainer from "../../../objects/items/CardContainer";
+import GenericItemContainer from "../../../objects/items/GenericItemContainer";
 import PlayerTurnIndicator from "../../../objects/items/PlayerTurnIndicator";
 import { checkTransformsAlmostEqual, getScreenCenter, loadIfImageNotLoaded, Transform, transformFromObject, transformRelativeToObject } from "../../../objects/Tools";
 import { CardGameUserAvatarContainer } from "../../../objects/userAvatarContainer/CardGameUserAvatarContainer";
@@ -31,6 +32,8 @@ export abstract class HostCardGame<
 
     playerTurnIndicator: PlayerTurnIndicator | null = null;
 
+    playerDealerIndicator: GenericItemContainer | null = null;
+
     constructor(hostScene: HostScene) {
         super(hostScene);
         this.hostScene = hostScene;
@@ -43,6 +46,7 @@ export abstract class HostCardGame<
 
         // load player turn image
         loadIfImageNotLoaded(this.hostScene, "playerTurnIndicator", "assets/tableGames/playerTurnIndicator.png");
+        loadIfImageNotLoaded(this.hostScene, "playerDealerIndicator", "assets/tableGames/DealerToken.png")
     }
 
     abstract createGameStateAfterDealing(): HostGameState<PlayerDataType, GameDataType>;
@@ -59,6 +63,10 @@ export abstract class HostCardGame<
         this.playerTurnIndicator.scale = 0.01;
         this.hostScene.add.existing(this.playerTurnIndicator);
 
+        this.playerDealerIndicator = new GenericItemContainer(this.hostScene, screenCenter.x, screenCenter.y, "playerDealerIndicator");
+        this.playerDealerIndicator.scale = 1;
+        this.hostScene.add.existing(this.playerDealerIndicator);
+
         this.changeState(new Shuffling(this));
     }
 
@@ -72,8 +80,26 @@ export abstract class HostCardGame<
 
     movePlayerTurnIndicatorToUserAvatar(userAvatar: CardGameUserAvatarContainer<PlayerDataType>) {
         if (!this.playerTurnIndicator) return;
-        const positionRotation = { x: userAvatar.x, y: userAvatar.y, rotation: userAvatar.scale, scale: userAvatar.scale * userAvatar.imageMultiplier };
+        const positionRotation = { x: userAvatar.x, y: userAvatar.y, rotation: userAvatar.rotation, scale: userAvatar.scale * userAvatar.imageMultiplier };
         this.playerTurnIndicator.startMovingOverTimeTo(positionRotation, .4, () => {
+
+        });
+    }
+
+    movePlayerDealerIndicatorToPlayer() {
+        // check if we have a user that is their turn
+        console.log('setting indicator to dealer', this.gameData.playerDealerId);
+        if (!this.gameData.playerDealerId) return;
+        const playerDealer = this.hostUserAvatars?.getUserById(this.gameData.playerDealerId);
+        console.log('playerDealer', playerDealer);
+        if (!playerDealer) return;
+        this.movePlayerDealerIndicatorToUserAvatar(playerDealer);
+    }
+
+    movePlayerDealerIndicatorToUserAvatar(userAvatar: CardGameUserAvatarContainer<PlayerDataType>) {
+        if (!this.playerDealerIndicator) return;
+        const positionRotation = transformFromObject(userAvatar, { x: 0, y: 300, rotation: 0, scale: 1 });
+        this.playerDealerIndicator.startMovingOverTimeTo(positionRotation, .4, () => {
 
         });
     }
@@ -202,6 +228,7 @@ export abstract class HostCardGame<
         super.update(time, delta);
         this.startMovingCardInHandToPrefferedPosition();
         this.playerTurnIndicator?.update(time, delta);
+        this.playerDealerIndicator?.update(time, delta);
     }
 
     // make this able to return the higher type
