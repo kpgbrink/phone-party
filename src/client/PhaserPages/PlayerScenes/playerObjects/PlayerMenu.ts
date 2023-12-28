@@ -1,3 +1,4 @@
+import { InputData } from "../../../../shared/data/Data";
 import { MainMenuGameData, PlayerMainMenuData } from "../../../../shared/data/datas/MainMenuData";
 import MenuButton from "../../objects/MenuButton";
 import { persistentData } from "../../objects/PersistantData";
@@ -5,7 +6,7 @@ import { getScreenDimensions } from "../../objects/Tools";
 import PlayerStartingScene from "../PlayerStartingScene";
 import { PlayerDataHandler } from "./PlayerDataHandler";
 
-export default class PlayerMenu extends PlayerDataHandler<PlayerMainMenuData, MainMenuGameData> {
+export default class PlayerMenu extends PlayerDataHandler<PlayerMainMenuData, MainMenuGameData, InputData> {
     selectGameButton: MenuButton | null = null;
 
     playerData: PlayerMainMenuData;

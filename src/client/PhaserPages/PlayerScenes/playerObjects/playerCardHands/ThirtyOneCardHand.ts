@@ -1,3 +1,4 @@
+import { CardInputData } from "../../../../../shared/data/datas/CardData";
 import { ThirtyOneCardGameData, ThirtyOnePlayerCardHandData } from "../../../../../shared/data/datas/cardHandDatas/ThirtyOneCardHandData";
 import socket from "../../../../SocketConnection";
 import MenuButton from "../../../objects/MenuButton";
@@ -7,7 +8,7 @@ import { PlayerCardHand } from "../PlayerCardHand";
 import PlayerScene from "../PlayerScene";
 
 
-export class ThirtyOneCardHand extends PlayerCardHand<ThirtyOnePlayerCardHandData, ThirtyOneCardGameData> {
+export class ThirtyOneCardHand extends PlayerCardHand<ThirtyOnePlayerCardHandData, ThirtyOneCardGameData, CardInputData> {
     playerData: ThirtyOnePlayerCardHandData;
     gameData: ThirtyOneCardGameData;
 
