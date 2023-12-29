@@ -157,7 +157,7 @@ export abstract class HostCardGame<
                 const card = this.cards.getCard(cardId);
                 if (!card) return;
                 card.inHandFaceUp = pickUpCardFaceUp;
-                card.depth = 25;
+                card.depth = 200;
                 card.userHandId = user.user.id;
             });
         }
