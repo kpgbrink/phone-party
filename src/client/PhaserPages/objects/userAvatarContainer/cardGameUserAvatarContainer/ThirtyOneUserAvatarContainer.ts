@@ -38,7 +38,7 @@ export class ThirtyOneUserAvatarContainer extends CardGameUserAvatarContainer<Th
             pokerChip.startMovingOverTimeTo(newTransform, 1, () => {
             });
 
-            pokerChip.setDepth(this.depth + 1000);
+            pokerChip.setDepth(1000);
             this.bluePokerChips.push(pokerChip);
         }
     }

@@ -185,7 +185,6 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         if (input.requestDeal) {
             // Add your code here
             this.timerNextRound.currentTime /= 1.5;
-
         }
     }
 

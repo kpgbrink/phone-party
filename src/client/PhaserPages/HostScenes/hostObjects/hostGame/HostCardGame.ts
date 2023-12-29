@@ -64,7 +64,8 @@ export abstract class HostCardGame<
         this.hostScene.add.existing(this.playerTurnIndicator);
 
         this.playerDealerIndicator = new GenericItemContainer(this.hostScene, screenCenter.x, screenCenter.y, "playerDealerIndicator");
-        this.playerDealerIndicator.scale = 1;
+        this.playerDealerIndicator.scale = 0.01;
+        this.playerDealerIndicator.setDepth(1000);
         this.hostScene.add.existing(this.playerDealerIndicator);
 
         this.changeState(new Shuffling(this));
@@ -98,7 +99,7 @@ export abstract class HostCardGame<
 
     movePlayerDealerIndicatorToUserAvatar(userAvatar: CardGameUserAvatarContainer<PlayerDataType>) {
         if (!this.playerDealerIndicator) return;
-        const positionRotation = transformFromObject(userAvatar, { x: 0, y: 300, rotation: 0, scale: 1 });
+        const positionRotation = transformFromObject(userAvatar, { x: 0, y: 350, rotation: 0, scale: 1 });
         this.playerDealerIndicator.startMovingOverTimeTo(positionRotation, .4, () => {
 
         });
@@ -305,6 +306,7 @@ export abstract class HostCardGame<
         }
         this.setNextDealer();
         this.sendGameData();
+        this.movePlayerDealerIndicatorToPlayer();
     }
 
     isUserTurn(userId: string) {
