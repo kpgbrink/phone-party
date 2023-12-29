@@ -185,6 +185,12 @@ export class ThirtyOneRoundEnd extends HostGameState<ThirtyOnePlayerCardHandData
         if (input.requestDeal) {
             // Add your code here
             this.timerNextRound.currentTime /= 1.5;
+            // show the request deal text
+            this.hostGame.hostUserAvatars?.userAvatarContainers.forEach(userAvatar => {
+                if (userAvatar.user.id === clientId) {
+                    userAvatar.showRequestDealText();
+                }
+            });
         }
     }
 

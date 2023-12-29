@@ -143,7 +143,7 @@ export abstract class HostCardGame<
             cardsToRemove.forEach(cardId => {
                 const card = this.cards.getCard(cardId);
                 if (!card) return;
-                card.setDepth(999);
+                card.setDepth(100);
                 this.onCardMoveToTable(user.user.id, card);
             });
         }
@@ -157,7 +157,7 @@ export abstract class HostCardGame<
                 const card = this.cards.getCard(cardId);
                 if (!card) return;
                 card.inHandFaceUp = pickUpCardFaceUp;
-                card.depth = 999999;
+                card.depth = 25;
                 card.userHandId = user.user.id;
             });
         }
@@ -292,7 +292,7 @@ export abstract class HostCardGame<
                 return aR.x - bR.x;
             }).forEach((card, index) => {
                 if (card.inUserHand) {
-                    card.depth = index + 101;
+                    card.depth = index + 10;
                 }
             });
         });

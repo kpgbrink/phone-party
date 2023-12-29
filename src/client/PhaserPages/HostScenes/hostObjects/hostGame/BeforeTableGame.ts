@@ -41,7 +41,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         this.hostUserAvatars.moveToEdgeOfTable();
         this.hostUserAvatars.userAvatarContainers.forEach(player => {
             player.create();
-            player.depth = 100;
+            player.depth = 40;
         });
     }
 

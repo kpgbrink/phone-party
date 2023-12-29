@@ -17,6 +17,7 @@ export class ThirtyOneUserAvatarContainer extends CardGameUserAvatarContainer<Th
     }
 
     create() {
+        super.create();
         this.createPokerChipLives();
     }
 
@@ -38,7 +39,7 @@ export class ThirtyOneUserAvatarContainer extends CardGameUserAvatarContainer<Th
             pokerChip.startMovingOverTimeTo(newTransform, 1, () => {
             });
 
-            pokerChip.setDepth(1000);
+            pokerChip.setDepth(100);
             this.bluePokerChips.push(pokerChip);
         }
     }

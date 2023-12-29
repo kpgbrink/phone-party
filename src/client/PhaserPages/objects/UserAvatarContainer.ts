@@ -136,6 +136,8 @@ export default class UserAvatarContainer extends Phaser.GameObjects.Container {
         this.setSize(0, 0);
     }
 
+    public create() { }
+
     public setUserName(name: string) {
         if (this.userNameText) {
             this.userNameText.setText(name);

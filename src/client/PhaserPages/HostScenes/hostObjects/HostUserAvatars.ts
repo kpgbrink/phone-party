@@ -44,7 +44,6 @@ export abstract class HostUserAvatars<UserAvatarContainerType extends UserAvatar
     }
 
     afterUserAvatarCreated(userAvatarContainer: UserAvatarContainer): void {
-
     }
 
     setDepth(depth: number) {

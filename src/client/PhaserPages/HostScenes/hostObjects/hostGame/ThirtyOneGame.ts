@@ -39,7 +39,7 @@ export class ThirtyOneGame
         this.hostUserAvatars.moveToEdgeOfTable();
         this.hostUserAvatars.userAvatarContainers.forEach(player => {
             player.create();
-            player.depth = 100;
+            player.depth = 10;
         });
     }
 
