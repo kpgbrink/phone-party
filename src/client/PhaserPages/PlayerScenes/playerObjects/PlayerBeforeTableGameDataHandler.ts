@@ -1,10 +1,9 @@
-import { InputData } from "../../../../shared/data/Data";
-import { BeforeTableGameData, PlayerBeforeTableGameData } from "../../../../shared/data/datas/BeforeTableGameData";
+import { BeforeTableGameData, PlayerBeforeTableGameData, PlayerBeforeTableGameInputData } from "../../../../shared/data/datas/BeforeTableGameData";
 import { MainMenuGameData } from "../../../../shared/data/datas/MainMenuData";
 import PlayerBeforeTableGameStart from "../PlayerBeforeTableGameStart";
 import { PlayerDataHandler } from "./PlayerDataHandler";
 
-export default class PlayerBeforeTableGameStartDataHandler extends PlayerDataHandler<PlayerBeforeTableGameData, BeforeTableGameData, InputData> {
+export default class PlayerBeforeTableGameStartDataHandler extends PlayerDataHandler<PlayerBeforeTableGameData, BeforeTableGameData, PlayerBeforeTableGameInputData> {
     playerData: PlayerBeforeTableGameData;
     gameData: MainMenuGameData;
     scene: PlayerBeforeTableGameStart;

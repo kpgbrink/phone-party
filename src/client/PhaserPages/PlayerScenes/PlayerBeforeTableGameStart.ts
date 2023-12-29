@@ -1,3 +1,4 @@
+import { PlayerBeforeTableGameInputData } from "../../../shared/data/datas/BeforeTableGameData";
 import MenuButton from "../objects/MenuButton";
 import { addUserNameText, getScreenDimensions, makeMyUserAvatarInCenterOfPlayerScreen } from "../objects/Tools";
 import PlayerBeforeTableGameStartDataHandler from "./playerObjects/PlayerBeforeTableGameDataHandler";
@@ -83,6 +84,8 @@ export default class PlayerBeforeTableGameStart extends PlayerScene {
         this.leftButton.setText(' <  ');
         this.leftButton.on('pointerdown', () => {
             // Left button event logic
+            const inputData: Partial<PlayerBeforeTableGameInputData> = { left: true } as Partial<PlayerBeforeTableGameInputData>;
+            this.playerBeforeGameStartDataHandler?.sendInputData(inputData);
         });
         this.add.existing(this.leftButton);
 
@@ -91,6 +94,8 @@ export default class PlayerBeforeTableGameStart extends PlayerScene {
         this.rightButton.setText('  > ');
         this.rightButton.on('pointerdown', () => {
             // Right button event logic
+            const inputData: Partial<PlayerBeforeTableGameInputData> = { right: true } as Partial<PlayerBeforeTableGameInputData>;
+            this.playerBeforeGameStartDataHandler?.sendInputData(inputData);
         });
         this.add.existing(this.rightButton);
     }

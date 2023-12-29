@@ -6,3 +6,8 @@ export class PlayerBeforeTableGameData extends PlayerData {
 
 export class BeforeTableGameData extends GameData {
 }
+
+export class PlayerBeforeTableGameInputData {
+    left: boolean = false;
+    right: boolean = false;
+}

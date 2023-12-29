@@ -270,11 +270,6 @@ io.on('connection', (socket) => {
         io.to(user.socketId).emit('room data', getRoom(user.room));
     });
 
-    // Tell Host user is ready to start the game
-    socket.on('ready', () => {
-        io.to(user.room).emit('ready', user.id);
-    });
-
     // TODO use this eventually actually juse the same text
     socket.on('playerDataToHost', (playerData: Partial<PlayerData>) => {
         const hostUser = getRoomHost(user.room);

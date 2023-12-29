@@ -74,7 +74,10 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         // update ready on the player
         const avatar = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === userId);
         if (!avatar) return;
-        avatar.setReady();
+        if (!playerData) return;
+        if (playerData.ready) {
+            avatar.setReady();
+        }
         this.startGameIfAllReady();
     }
 
@@ -85,6 +88,21 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         return {
             ready: playerData.ready,
         };
+    }
+
+    override onInputReceived(clientId: string, input: any): void {
+        super.onInputReceived(clientId, input);
+        console.log('input received', input);
+        // update the avatar rotation
+        const avatar = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === clientId);
+        if (!avatar) return;
+        if (!input) return;
+        if (input.left) {
+            avatar.rotation -= Math.PI / 2;
+        }
+        if (input.right) {
+            avatar.rotation += Math.PI / 2;
+        }
     }
 
     startGameIfAllReady() {

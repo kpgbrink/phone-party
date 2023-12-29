@@ -51,6 +51,7 @@ export abstract class HostGame<PlayerDataType extends PlayerData, GameDataType e
     onGameDataReceived(userId: string, gameData: Partial<GameDataType>, playerData: Partial<PlayerDataType> | null, updateGameData: boolean) {
         this.currentState?.onGameDataReceived(userId, gameData, playerData, updateGameData);
     }
+
     // InputData --------------------
     onInputReceived(clientId: string, input: any) {
         this.currentState?.onInputReceived(clientId, input);
