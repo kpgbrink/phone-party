@@ -33,6 +33,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         const screenCenter = getScreenCenter(this.scene);
         this.gameTable = new GameTable(this.scene, screenCenter.x, screenCenter.y);
         this.gameTable.setDepth(-1);
+        this.sendDataToAll();
     }
 
     createHostUserAvatarsAroundTableGame() {
@@ -99,9 +100,12 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         if (!input) return;
         if (input.left) {
             avatar.rotation -= Math.PI / 2;
+            avatar.tableRotation -= Math.PI / 2;
+            avatar.setPosition(3, 5);
         }
         if (input.right) {
             avatar.rotation += Math.PI / 2;
+            avatar.setPosition(599, 5);
         }
     }
 

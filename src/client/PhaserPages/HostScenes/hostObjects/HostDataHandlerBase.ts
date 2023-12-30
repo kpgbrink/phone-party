@@ -30,8 +30,9 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         socket.removeListener("inputDataToHost");
     }
 
-    // WEBRTC --------------------
-    // HostConnections --------------------
+    // -- WEBRTC --------------------
+
+    // -- -- HostConnections --------------------
     initializeDataListenersForExistingConnections() {
         // Set up listeners for existing connections
         hostConnections.playerConnections.forEach(connection => {
@@ -88,7 +89,7 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
 
     abstract onInputReceived(clientId: string, input: any): void;
 
-    // --- end HostConnections ---
+    // -- -- end HostConnections ---
     trySendDataViaWebRTC(userId: string | null, data: any, type: string): boolean {
         if (userId === null) {
             // Send data to all users
@@ -162,8 +163,9 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
             socket.emit("playerDataToUser", userId, playerDataToSend);
         }
     }
+    // --- end PlayerData ---
 
-    // GameData --------------------
+    // -- GameData --------------------
     abstract getGameDataToSend(): Partial<GameDataType> | undefined;
 
     // Override this
@@ -191,6 +193,11 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
             socket.emit("gameDataToUser", userId, gameDataToSend);
         }
     }
+
+    sendGameDataToAll(gameData: Partial<GameDataType> | undefined = undefined) {
+        this.sendGameData(null, gameData);
+    }
+    // --- end GameData ---
 
     // Data (BOTH PLAYER AND GAME DATA) --------------------
     listenForData() {
@@ -221,10 +228,26 @@ export abstract class HostDataHandlerBase<PlayerDataType extends PlayerData, Gam
         }
     }
 
+    // Send out all data to everyone
+    sendDataToAll(gameData: Partial<GameDataType> | undefined = undefined) {
+        const gameDataToSend = gameData || this.getGameDataToSend();
+        // iterate through all users and send the data to them
+        const users = persistentData.roomData?.users;
+        if (!users) return;
+        users.forEach(user => {
+            const playerData = this.getPlayerDataToSend(user.id);
+            this.sendData(user.id, gameDataToSend, playerData);
+        });
+    }
+
+    // --- end data ---
+
+
+    // -- InputData --------------------
     listenForInputData() {
         socket.on("inputDataToHost", (userId: string, input: any) => {
             this.onInputReceived(userId, input);
         });
     }
-    // --- end data ---
+    // --- end InputData ---
 }
