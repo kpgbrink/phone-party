@@ -17,7 +17,10 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
 
     hostUserAvatars: HostUserAvatarsAroundTableSelectPosition | null = null;
 
-    static calculateRotations(numPoints) {
+    calculateRotations() {
+        // set num points to number of players + 2
+        if (!persistentData.roomData) throw new Error('Room data not found');
+        const numPoints = persistentData.roomData?.users.length + 2;
         const angleIncrement = (2 * Math.PI) / numPoints;
         const tableRotations: number[] = [];
 
@@ -56,10 +59,9 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         const screenCenter = getScreenCenter(this.scene);
         // make 2 more table locations than number of players
         if (!persistentData.roomData) throw new Error('Room data not found');
-        const tableRotations = BeforeTableGame.calculateRotations(persistentData.roomData?.users.length + 2);
+        const tableRotations = this.calculateRotations();
         tableRotations.forEach((rotation) => {
             const vectorFromCenter = vectorFromAngleAndLength(rotation, 20);
-rotation
             // move the vectors from center to edge of table
             // Calculate the distance and rotation from the table for the current rotation
             const { maxDistance, positionAngle } = calculateDistanceAndRotationFromTable(this.scene, {
