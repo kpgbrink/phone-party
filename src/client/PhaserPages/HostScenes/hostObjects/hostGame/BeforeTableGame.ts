@@ -2,10 +2,12 @@ import { BeforeTableGameData, PlayerBeforeTableGameData } from "../../../../../s
 import socket from "../../../../SocketConnection";
 import GameTable from "../../../objects/GameTable";
 import { persistentData } from "../../../objects/PersistantData";
-import { getScreenCenter, loadIfImageNotLoaded, playersInRoom } from "../../../objects/Tools";
+import { getScreenCenter, loadIfImageNotLoaded, playersInRoom, vectorFromAngleAndLength } from "../../../objects/Tools";
 import HostBeforeTableGameScene from "../../HostBeforeTableGameScene";
+import { calculateDistanceAndRotationFromTable } from "../../hostTools/HostTools";
 import { HostGame } from "../HostGame";
 import { HostUserAvatarsAroundTableSelectPosition } from "../HostUserAvatars/HostUserAvatarsAroundTable/HostUserAvatarsAroundTableSelectPosition";
+
 
 
 export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeTableGameData> {
@@ -14,6 +16,17 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
     gameTable: GameTable | null = null;
 
     hostUserAvatars: HostUserAvatarsAroundTableSelectPosition | null = null;
+
+    static calculateRotations(numPoints) {
+        const angleIncrement = (2 * Math.PI) / numPoints;
+        const tableRotations: number[] = [];
+
+        for (let i = 0; i < numPoints; i++) {
+            tableRotations.push(i * angleIncrement);
+        }
+
+        return tableRotations;
+    }
 
     constructor(scene: HostBeforeTableGameScene) {
         super(scene);
@@ -25,6 +38,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         super.preload();
         loadIfImageNotLoaded(this.scene, 'checkmark', 'assets/ui/checkmark.png');
         loadIfImageNotLoaded(this.scene, 'table', 'assets/tableGames/TableScaled.png');
+        loadIfImageNotLoaded(this.scene, 'positionIndicator', 'assets/tableGames/PlayerPickPosition.png'); // Load your indicator image
     }
 
     create() {
@@ -34,6 +48,35 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         this.gameTable = new GameTable(this.scene, screenCenter.x, screenCenter.y);
         this.gameTable.setDepth(-1);
         this.sendDataToAll();
+        this.makeTableLocationsSelectable();
+    }
+
+    makeTableLocationsSelectable() {
+        // create a table location selectable for the 8 positions selectable
+        const screenCenter = getScreenCenter(this.scene);
+        // make 2 more table locations than number of players
+        if (!persistentData.roomData) throw new Error('Room data not found');
+        const tableRotations = BeforeTableGame.calculateRotations(persistentData.roomData?.users.length + 2);
+        tableRotations.forEach((rotation) => {
+            const vectorFromCenter = vectorFromAngleAndLength(rotation, 20);
+rotation
+            // move the vectors from center to edge of table
+            // Calculate the distance and rotation from the table for the current rotation
+            const { maxDistance, positionAngle } = calculateDistanceAndRotationFromTable(this.scene, {
+                x: screenCenter.x + vectorFromCenter.x,
+                y: screenCenter.y + vectorFromCenter.y,
+            });
+
+            // put distance using the maxDistance and position angle from the center of the screen
+            vectorFromCenter.x = maxDistance * Math.cos(rotation);
+            vectorFromCenter.y = maxDistance * Math.sin(rotation);
+
+            const x = screenCenter.x + vectorFromCenter.x;
+            const y = screenCenter.y + vectorFromCenter.y;
+            const tableLocation = this.scene.add.image(x, y, 'positionIndicator');
+            tableLocation.rotation = positionAngle;
+            this.scene.add.existing(tableLocation);
+        });
     }
 
     createHostUserAvatarsAroundTableGame() {
@@ -123,7 +166,4 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         if (playersInGame.length === 0) return;
         this.scene.goToNextScene();
     }
-
-
-    // ------------------------------------ Data End ------------------------------------  // TODO remove this
 } 
