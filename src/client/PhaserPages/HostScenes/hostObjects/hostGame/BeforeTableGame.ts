@@ -19,11 +19,16 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
 
     playerSelectedLocations: Record<string, { angle: number, locationIndex: number }> = {}; // Store selected locations and starting angles for each player
 
+    constructor(scene: HostBeforeTableGameScene) {
+        super(scene);
+        this.scene = scene;
+        this.gameData = new BeforeTableGameData();
+    }
 
     calculateRotations() {
         // set num points to number of players + 2
         if (!persistentData.roomData) throw new Error('Room data not found');
-        const numPoints = persistentData.roomData?.users.length + 2;
+        const numPoints = persistentData.roomData?.users.filter(u => u.inGame).length + 2;
         const angleIncrement = (2 * Math.PI) / numPoints;
         const tableRotations: number[] = [];
 
@@ -32,12 +37,6 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         }
 
         return tableRotations;
-    }
-
-    constructor(scene: HostBeforeTableGameScene) {
-        super(scene);
-        this.scene = scene;
-        this.gameData = new BeforeTableGameData();
     }
 
     preload() {
@@ -55,6 +54,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         this.gameTable.setDepth(-1);
         this.sendDataToAll();
         this.makeTableLocationsSelectable();
+        this.setupPlayerStartingLocations();
     }
 
     makeTableLocationsSelectable() {
@@ -82,6 +82,48 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
             tableLocation.rotation = positionAngle;
             this.scene.add.existing(tableLocation);
         });
+    }
+
+    setupPlayerStartingLocations() {
+        if (!persistentData.roomData) throw new Error('Room data not found');
+        const screenCenter = getScreenCenter(this.scene);
+
+        // Calculate table rotations
+        let availableRotations = this.calculateRotations();
+
+        // Create an array of users with their current rotation and a flag indicating if they have been positioned
+        let usersWithRotations = persistentData.roomData.users.map(user => {
+            const userAvatar = this.hostUserAvatars?.userAvatarContainers.find(avatar => avatar.user.id === user.id);
+            return { userAvatar, currentRotation: userAvatar ? userAvatar.tableRotation : 0, isPositioned: false };
+        });
+
+        while (usersWithRotations.some(user => !user.isPositioned)) {
+            usersWithRotations.forEach(user => {
+                if (!user.isPositioned) {
+                    // Find the closest rotation
+                    const closestRotation = availableRotations.reduce((prev, curr) => {
+                        return (Math.abs(curr - user.currentRotation) < Math.abs(prev - user.currentRotation) ? curr : prev);
+                    });
+
+                    // Assign the closest rotation
+                    user.currentRotation = closestRotation;
+                    user.isPositioned = true;
+
+                    // Remove the assigned rotation from the available list
+                    availableRotations = availableRotations.filter(rotation => rotation !== closestRotation);
+
+                    // Update user avatar position
+                    const vectorFromCenter = vectorFromAngleAndLength(closestRotation, 20);
+                    if (user.userAvatar) {
+                        user.userAvatar.tableRotation = closestRotation;
+                        user.userAvatar.setPosition(screenCenter.x + vectorFromCenter.x, screenCenter.y + vectorFromCenter.y);
+                    }
+                }
+            });
+
+            // Sort users by those who are positioned
+            usersWithRotations = usersWithRotations.sort((a, b) => a.isPositioned === b.isPositioned ? 0 : a.isPositioned ? -1 : 1);
+        }
     }
 
     createHostUserAvatarsAroundTableGame() {
