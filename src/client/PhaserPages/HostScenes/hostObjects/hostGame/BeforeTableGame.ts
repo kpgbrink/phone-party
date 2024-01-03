@@ -25,24 +25,29 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         this.gameData = new BeforeTableGameData();
     }
 
-    calculateRotations() {
-        // set num points to number of players + 2
+    calculateRotations(): number[] {
         if (!persistentData.roomData) throw new Error('Room data not found');
-        const numPoints = (() => {
+        const numPoints: number = (() => {
             const usersInGame = persistentData.roomData.users.filter(u => u.inGame).length;
-            const numPoints = usersInGame + 2;
-            // round up to nearest even number
-            return Math.ceil(numPoints / 2) * 2;
+            return Math.ceil((usersInGame + 2) / 2) * 2; // round up to nearest even number
         })();
-        const angleIncrement = (2 * Math.PI) / numPoints;
+        const angleIncrement: number = (2 * Math.PI) / numPoints;
+        const offset: number = 0.5 * Math.PI / 180; // Half a degree in radians
         const tableRotations: number[] = [];
 
         for (let i = 0; i < numPoints; i++) {
-            tableRotations.push(i * angleIncrement);
+            let rotation: number = i * angleIncrement;
+            // Add a slight offset if the angle is exactly 0 or 180 degrees in radians
+            if (rotation === 0 || rotation === Math.PI) {
+                rotation += offset;
+            }
+            tableRotations.push(rotation);
         }
+        console.log('table rotations', tableRotations);
 
         return tableRotations;
     }
+
 
     preload() {
         super.preload();

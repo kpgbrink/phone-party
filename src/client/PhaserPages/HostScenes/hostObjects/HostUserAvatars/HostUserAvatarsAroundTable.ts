@@ -10,27 +10,35 @@ export abstract class HostUserAvatarsAroundTable<UserAvatarContainerType extends
 
     moveToEdgeOfTable() {
         const screenCenter = getScreenCenter(this.scene);
+
         // Move all users to their correct position
         this.userAvatarContainers.forEach((userAvatar) => {
-            // calculate distance from center
-            const distanceFromCenter = distanceBetweenTwoPoints(userAvatar, screenCenter);
-
-            // calculate angle from center to user avatar
+            // Calculate angle from center to user avatar
             const angleFromCenterToUserAvatar = angleFromPositionToPosition(screenCenter, { x: userAvatar.x, y: userAvatar.y });
-
-            // Calculate max distance
+            // Calculate max distance to the edge of the table and then subtract 100 pixels
             const { maxDistance, positionAngle } = calculateDistanceAndRotationFromTable(this.scene, { x: userAvatar.x, y: userAvatar.y });
-            // increase distance from center to make it to the outside of circle
-            const distanceFromCenterToOutside = Math.min(distanceFromCenter + this.moveToEdgeOfTableSpeed, maxDistance);
-            // calculate new x and y position
-            const vectorFromCenter = vectorFromAngleAndLength(angleFromCenterToUserAvatar, distanceFromCenterToOutside);
+            const targetDistance = maxDistance - 300; // 100 pixels away from the edge
+            // Calculate current distance from center
+            const currentDistance = distanceBetweenTwoPoints(userAvatar, screenCenter);
+            // Use an IIFE to determine newDistance
+            const newDistance = (() => {
+                if (currentDistance < targetDistance) {
+                    // If the avatar is more than 100 pixels away from the edge, immediately bring it to the target distance
+                    return targetDistance;
+                } else {
+                    // Otherwise, move the avatar gradually
+                    return Math.min(currentDistance + this.moveToEdgeOfTableSpeed, maxDistance);
+                }
+            })();
+            // Calculate new x and y position
+            const vectorFromCenter = vectorFromAngleAndLength(angleFromCenterToUserAvatar, newDistance);
             const newX = screenCenter.x + vectorFromCenter.x;
             const newY = screenCenter.y + vectorFromCenter.y;
-            // move user avatar to new position
+            // Move user avatar to new position
             userAvatar.x = newX;
             userAvatar.y = newY;
             userAvatar.tableRotation = keepAnglePositive(angleFromCenterToUserAvatar);
-            // rotate user avatar to face the center
+            // Rotate user avatar to face the center
             userAvatar.rotation = positionAngle;
         });
     }
