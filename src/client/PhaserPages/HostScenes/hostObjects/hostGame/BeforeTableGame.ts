@@ -28,7 +28,12 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
     calculateRotations() {
         // set num points to number of players + 2
         if (!persistentData.roomData) throw new Error('Room data not found');
-        const numPoints = persistentData.roomData?.users.filter(u => u.inGame).length + 2;
+        const numPoints = (() => {
+            const usersInGame = persistentData.roomData.users.filter(u => u.inGame).length;
+            const numPoints = usersInGame + 2;
+            // round up to nearest even number
+            return Math.ceil(numPoints / 2) * 2;
+        })();
         const angleIncrement = (2 * Math.PI) / numPoints;
         const tableRotations: number[] = [];
 
@@ -91,6 +96,9 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         // Calculate table rotations
         let availableRotations = this.calculateRotations();
 
+        // Initialize playerSelectedLocations
+        this.playerSelectedLocations = {};
+
         // Create an array of users with their current rotation and a flag indicating if they have been positioned
         let usersWithRotations = persistentData.roomData.users.map(user => {
             const userAvatar = this.hostUserAvatars?.userAvatarContainers.find(avatar => avatar.user.id === user.id);
@@ -112,11 +120,15 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
                     // Remove the assigned rotation from the available list
                     availableRotations = availableRotations.filter(rotation => rotation !== closestRotation);
 
-                    // Update user avatar position
+                    // Update user avatar position and store in playerSelectedLocations
                     const vectorFromCenter = vectorFromAngleAndLength(closestRotation, 20);
                     if (user.userAvatar) {
                         user.userAvatar.tableRotation = closestRotation;
                         user.userAvatar.setPosition(screenCenter.x + vectorFromCenter.x, screenCenter.y + vectorFromCenter.y);
+                        this.playerSelectedLocations[user.userAvatar.user.id] = {
+                            angle: closestRotation,
+                            locationIndex: availableRotations.length // or some other logic to determine the index
+                        };
                     }
                 }
             });
@@ -189,6 +201,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
         if (!avatar) return;
         if (!input) return;
         if (input.left) {
+            console.log('move left');
             // Move the selected location to the left
             this.moveSelectedLocation(clientId, -1);
         }
@@ -217,94 +230,76 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
     moveSelectedLocation(clientId: string, direction: number) {
         const playerData = this.playerSelectedLocations[clientId];
         if (!playerData) return;
-        const { angle, locationIndex } = playerData;
-        const numLocations = this.calculateRotations().length;
-        const newLocationIndex = (locationIndex + direction + numLocations) % numLocations;
-        const newAngle = this.calculateRotations()[newLocationIndex];
 
-        // Check for collisions with other players at the new location
-        const isCollision = this.isCollisionAtLocation(newAngle);
-        if (isCollision) {
-            // Handle collision by displacing the other player
-            const otherPlayer = this.findPlayerAtLocation(clientId, newAngle);
-            if (otherPlayer) {
-                // Swap positions of the current player and the other player
-                this.swapPlayerLocations(clientId, otherPlayer.user.id);
+        const tableRotations = this.calculateRotations();
+        const numLocations = tableRotations.length;
+
+        // Calculate new location index
+        const newLocationIndex = (playerData.locationIndex + direction + numLocations) % numLocations;
+        const newAngle = tableRotations[newLocationIndex];
+
+        // Check for collision at the new location
+        const otherPlayerId = this.findPlayerIdAtAngle(newAngle, clientId);
+        if (otherPlayerId) {
+            console.log('swap players', clientId, otherPlayerId);
+            // Swap positions with the other player
+            this.swapPlayerLocations(clientId, otherPlayerId);
+        } else {
+            // No collision, just move the player to the new location
+            this.updatePlayerLocation(clientId, newAngle, newLocationIndex);
+        }
+    }
+
+    findPlayerIdAtAngle(angle: number, excludingClientId: string): string | null {
+        // Find if any player other than excludingClientId is at the given angle
+        for (const [clientId, playerData] of Object.entries(this.playerSelectedLocations)) {
+            if (clientId !== excludingClientId && playerData.angle === angle) {
+                return clientId;
             }
         }
+        return null;
+    }
 
-        this.playerSelectedLocations[clientId] = { angle: newAngle, locationIndex: newLocationIndex };
-
-        // Update the player's location
+    updatePlayerLocation(clientId: string, angle: number, locationIndex: number) {
+        // Update the location of the player
+        console.log('update player location', clientId, angle, locationIndex);
         const screenCenter = getScreenCenter(this.scene);
-        const vectorFromCenter = vectorFromAngleAndLength(newAngle, 20);
+        const vectorFromCenter = vectorFromAngleAndLength(angle, 200);
         const x = screenCenter.x + vectorFromCenter.x;
         const y = screenCenter.y + vectorFromCenter.y;
         const avatar = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === clientId);
+
         if (avatar) {
             avatar.setPosition(x, y);
         }
+        this.playerSelectedLocations[clientId] = { angle, locationIndex };
     }
 
-    // Function to check for collisions at a specific location
-    isCollisionAtLocation(angle: number): boolean {
-        const clientId = ""; // Replace with the actual clientId
-        const playerAtLocation = this.hostUserAvatars?.userAvatarContainers.find((avatar) => {
-            if (avatar.user.id !== clientId) { // Exclude the current player
-                const vectorFromCenter = vectorFromAngleAndLength(angle, 20);
-                const screenCenter = getScreenCenter(this.scene);
-                const x = screenCenter.x + vectorFromCenter.x;
-                const y = screenCenter.y + vectorFromCenter.y;
-                const distance = Math.sqrt(Math.pow(x - avatar.x, 2) + Math.pow(y - avatar.y, 2));
-                return distance < avatar.width; // Adjust this value as needed to define the collision radius
-            }
-            return false;
-        });
-
-        return playerAtLocation !== undefined;
-    }
-
-    findPlayerAtLocation(clientId: string, angle: number): any | null {
-        const playerAtLocation = this.hostUserAvatars?.userAvatarContainers.find((avatar) => {
-            if (avatar.user.id !== clientId) { // Exclude the current player
-                const vectorFromCenter = vectorFromAngleAndLength(angle, 20);
-                const screenCenter = getScreenCenter(this.scene);
-                const x = screenCenter.x + vectorFromCenter.x;
-                const y = screenCenter.y + vectorFromCenter.y;
-                const distance = Math.sqrt(Math.pow(x - avatar.x, 2) + Math.pow(y - avatar.y, 2));
-                return distance < avatar.width; // Adjust this value as needed to define the collision radius
-            }
-            return false;
-        });
-
-        return playerAtLocation || null;
-    }
-
-    // Function to swap positions of two players
     swapPlayerLocations(playerId1: string, playerId2: string) {
         const player1Data = this.playerSelectedLocations[playerId1];
         const player2Data = this.playerSelectedLocations[playerId2];
 
         if (!player1Data || !player2Data) return;
 
-        // Swap their positions
-        this.playerSelectedLocations[playerId1] = { angle: player2Data.angle, locationIndex: player2Data.locationIndex };
-        this.playerSelectedLocations[playerId2] = { angle: player1Data.angle, locationIndex: player1Data.locationIndex };
+        // Swap their angles and location indices
+        [player1Data.angle, player2Data.angle] = [player2Data.angle, player1Data.angle];
+        [player1Data.locationIndex, player2Data.locationIndex] = [player2Data.locationIndex, player1Data.locationIndex];
 
         // Update their positions on the screen
-        const screenCenter = getScreenCenter(this.scene);
-        const vectorFromCenter1 = vectorFromAngleAndLength(player2Data.angle, 20);
-        const vectorFromCenter2 = vectorFromAngleAndLength(player1Data.angle, 20);
-        const x1 = screenCenter.x + vectorFromCenter1.x;
-        const y1 = screenCenter.y + vectorFromCenter1.y;
-        const x2 = screenCenter.x + vectorFromCenter2.x;
-        const y2 = screenCenter.y + vectorFromCenter2.y;
-        const avatar1 = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === playerId1);
-        const avatar2 = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === playerId2);
+        this.updatePlayerPosition(playerId1, player1Data.angle, player1Data.locationIndex);
+        this.updatePlayerPosition(playerId2, player2Data.angle, player2Data.locationIndex);
+    }
 
-        if (avatar1 && avatar2) {
-            avatar1.setPosition(x1, y1);
-            avatar2.setPosition(x2, y2);
+    updatePlayerPosition(clientId: string, angle: number, locationIndex: number) {
+        const screenCenter = getScreenCenter(this.scene);
+        const vectorFromCenter = vectorFromAngleAndLength(angle, 20);
+        const x = screenCenter.x + vectorFromCenter.x;
+        const y = screenCenter.y + vectorFromCenter.y;
+        const avatar = this.hostUserAvatars?.userAvatarContainers.find((avatar) => avatar.user.id === clientId);
+
+        if (avatar) {
+            avatar.setPosition(x, y);
         }
+        this.playerSelectedLocations[clientId] = { angle, locationIndex };
     }
 } 
