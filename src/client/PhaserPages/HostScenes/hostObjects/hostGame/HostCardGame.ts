@@ -211,9 +211,11 @@ export abstract class HostCardGame<
         this.turn++;
         if (this.gameData.playerTurnId === null) {
             this.gameData.playerTurnId = this.getNextPlayerId(this.getDealer().user.id);
+            this.sendGameDataToAll();
             return;
         }
         this.gameData.playerTurnId = this.getNextPlayerId(this.gameData.playerTurnId);
+        this.sendGameDataToAll();
     }
 
     getNextPlayerId(playerId: string) {

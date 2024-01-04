@@ -23,6 +23,9 @@ export abstract class PlayerCardHand
     allowedPickUpCardAmount = 0;
     allowedDropCardAmount = 0;
 
+    // solid color background change
+    turnIndicator: Phaser.GameObjects.Rectangle | null = null;
+
     tablePosition: Transform;
     pickUpAndPlaceBasePosition: Transform;
     handBasePosition: Transform;
@@ -73,9 +76,25 @@ export abstract class PlayerCardHand
         this.updateCardsInHand(playerData);
 
         this.updatePickUpFaceDownCards(playerData);
+
         this.updatePickUpFaceUpCards(playerData);
 
         this.updatePickUpCards(playerData);
+    }
+
+    updateTurnIndicator(gameData: Partial<CardGameDataType> | null) {
+        if (!gameData) return;
+        if (gameData.playerTurnId === undefined) return;
+        console.log('show turn indicator', gameData.playerTurnId, persistentData.myUserId);
+        if (gameData.playerTurnId === persistentData.myUserId && gameData.waitingForDeal === false) {
+            this.showTurnIndicator(true);
+        } else {
+            this.showTurnIndicator(false);
+        }
+    }
+
+    showTurnIndicator(showTurnIndicator: boolean) {
+        this.turnIndicator?.setVisible(showTurnIndicator);
     }
 
     updatePickUpCards(playerData: Partial<PlayerCardHandDataType>) {
@@ -195,6 +214,9 @@ export abstract class PlayerCardHand
 
     override onGameDataReceived(gameData: Partial<CardGameDataType>): void {
         this.updateDealing(gameData);
+        console.log('on game data received', gameData);
+
+        this.updateTurnIndicator(gameData);
     }
 
     updateDealing(gameData: Partial<CardGameDataType>) {
@@ -299,6 +321,13 @@ export abstract class PlayerCardHand
             });
         });
         this.scene.add.existing(this.hideShowCardButton);
+
+        // create turn indicator background
+        this.turnIndicator = this.scene.add.rectangle(0, 0, 1080, 1920, 0x0f1f0f);
+        this.turnIndicator.setOrigin(0);
+        this.turnIndicator.setDepth(-100);
+        this.turnIndicator.setVisible(true);
+        this.scene.add.existing(this.turnIndicator);
     }
 
     setCardsToPickUp(cardIds: number[], faceUp: boolean, order: number) {
