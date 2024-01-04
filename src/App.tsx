@@ -15,6 +15,8 @@ export default function App() {
             <Route path="/" element={<HomePageCreatingRoomId />} />
             <Route path="/room/:roomId" element={<HomePage />} />
 
+            <Route path="/host/:roomId/:game" element={<HostPage />} />
+
             <Route
               path="/room/:roomId/player"
               element={<PlayerPageCreatingUserId />}
@@ -23,8 +25,6 @@ export default function App() {
               path="/room/:roomId/player/:userId"
               element={<PlayerPage />}
             />
-
-            <Route path="/host/:roomId/:game" element={<HostPage />} />
           </Routes>
         </BrowserRouter>
       </div>

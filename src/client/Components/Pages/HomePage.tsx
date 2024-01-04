@@ -6,6 +6,7 @@ import {
 } from "../../../shared/data/datas/MainMenuData";
 import { AppContext } from "../../AppContext";
 import { palletColors } from "../../Palettes";
+import { useRoomAlreadyHosted } from "../../PhaserPages/HostPage/UseRoomAlreadyHosted";
 import { HostDataHandler } from "../../PhaserPages/HostScenes/hostObjects/HostDataHandler";
 import HostPlayerChooseGame from "./HomePage/HostPlayerChooseGame";
 import PlayerJoin from "./HomePage/HostPlayerJoin";
@@ -16,6 +17,8 @@ export default function HomePage() {
     useContext(AppContext);
   document.documentElement.style.cursor = "auto";
   const navigate = useNavigate();
+
+  useRoomAlreadyHosted();
 
   // add game data to state
   const [mainMenuData, setMainMenuData] = useState<MainMenuGameData>(
@@ -51,20 +54,6 @@ export default function HomePage() {
       navigate(navigateTo);
     }
   }, [mainMenuData, navigate, roomCreated]);
-
-  // check every 5 seconds if socket is connected if not then refresh the page
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     console.log("socket connected", socket.connected);
-  //     if (!socket.connected) {
-  //       setTimeout(() => {
-  //         console.log("refresh");
-  //         window.location.reload();
-  //       }, 500);
-  //     }
-  //   }, 5000);
-  //   return () => clearInterval(interval);
-  // }, []);
 
   // Start hosting room
   useEffect(() => {

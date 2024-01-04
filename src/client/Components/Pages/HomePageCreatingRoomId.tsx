@@ -3,10 +3,13 @@ import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NewRoomId } from "../../../shared/Types";
 import { AppContext } from "../../AppContext";
+import { useRoomAlreadyHosted } from "../../PhaserPages/HostPage/UseRoomAlreadyHosted";
 
 export default function HomePageCreatingRoomId() {
   const navigate = useNavigate();
   const { setRoomCreated } = useContext(AppContext);
+
+  useRoomAlreadyHosted();
 
   useEffect(() => {
     const abortController = new AbortController();

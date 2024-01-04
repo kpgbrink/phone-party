@@ -75,6 +75,12 @@ io.on('connection', (socket) => {
             console.log('already hosting this room');
             return;
         }
+        // check if someone else is hosting the room
+        if (roomData?.hostUser?.socketId !== socket.id && roomData?.hostUser?.socketId) {
+            console.log('emit room already hosted');
+            socket.emit('room already hosted');
+            return;
+        }
         socketLeavePreviousRoom(socket, user);
 
         user.room = room;
