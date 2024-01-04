@@ -53,6 +53,20 @@ export const addHostUserToRoom = (hostUser: User) => {
     return hostUser;
 }
 
+export const handlePlayersAfterGameEnd = (room: RoomData) => {
+    room.users.forEach(user => {
+        if (!user.socketId) {
+            proceedWithDeletion(user, room);
+        }
+    });
+}
+
+const proceedWithDeletion = (playerUser: User, room: RoomData) => {
+    console.log('deleting player user');
+    room.users = room.users.filter(user => user.socketId !== playerUser.socketId);
+    checkIfShouldDeleteRoom(room);
+}
+
 export const updateUser = (userUpdate: Partial<User>, user: User) => {
     // only update if user is in room
     const roomData = rooms.get(user.room);
@@ -106,7 +120,6 @@ const deletePlayerUserFromRoom = (playerUser: User, room: RoomData) => {
         && playerUser.inGame) {
         console.log('user is in game that is not leavable so keep them in game');
         // remove the socket id from the user
-        playerUser.socketId = null;
         playerUser.socketId = null;
         console.log('keeping user in game');
         checkIfShouldDeleteRoom(room);

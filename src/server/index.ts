@@ -4,7 +4,7 @@ import { Server, Socket } from "socket.io";
 import uniqid from 'uniqid';
 import { Game, NewRoomId, StoredBrowserIds, User, UserAvatar } from '../shared/Types';
 import { GameData, PlayerData } from '../shared/data/Data';
-import { addHostUserToRoom, addUserToRoom, getRoom, getRoomHost, removeUser, updateUser } from './user';
+import { addHostUserToRoom, addUserToRoom, getRoom, getRoomHost, handlePlayersAfterGameEnd, removeUser, updateUser } from './user';
 
 const app = express()
 
@@ -234,6 +234,15 @@ io.on('connection', (socket) => {
             console.log('before users', room.users);
             room.users.forEach(u => u.inGame = true);
             console.log('after users', room.users);
+        }
+        // check if switching back to staring scene. Means the game is ending.
+        if (room.game.currentPlayerScene !== 'PlayerStartingScene' && game.currentPlayerScene == 'PlayerStartingScene') {
+            // set in game to false for all users
+            console.log('before users', room.users);
+            room.users.forEach(u => u.inGame = false);
+            console.log('after users', room.users);
+            // check if users should be deleted
+            handlePlayersAfterGameEnd(room);
         }
         room.game = { ...room.game, ...game };
         // console.log('room game', room.game);
