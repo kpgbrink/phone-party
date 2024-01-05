@@ -122,7 +122,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
                     user.currentRotation = closestRotation;
                     user.isPositioned = true;
 
-                    // Remove the assigned rotation from the available list
+                    // Remove the assigned rotation from the available list immediately
                     availableRotations = availableRotations.filter(rotation => rotation !== closestRotation);
 
                     // Update user avatar position and store in playerSelectedLocations
@@ -132,7 +132,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
                         user.userAvatar.setPosition(screenCenter.x + vectorFromCenter.x, screenCenter.y + vectorFromCenter.y);
                         this.playerSelectedLocations[user.userAvatar.user.id] = {
                             angle: closestRotation,
-                            locationIndex: availableRotations.length // or some other logic to determine the index
+                            locationIndex: this.calculateRotations().indexOf(closestRotation) // Calculate the index based on the original rotation list
                         };
                     }
                 }
@@ -142,6 +142,7 @@ export class BeforeTableGame extends HostGame<PlayerBeforeTableGameData, BeforeT
             usersWithRotations = usersWithRotations.sort((a, b) => a.isPositioned === b.isPositioned ? 0 : a.isPositioned ? -1 : 1);
         }
     }
+
 
     createHostUserAvatarsAroundTableGame() {
         this.hostUserAvatars = new HostUserAvatarsAroundTableSelectPosition(this.scene);
