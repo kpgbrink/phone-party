@@ -3,6 +3,7 @@ import { Cards } from "../../objects/Cards";
 import CardContainer from "../../objects/items/CardContainer";
 import MenuButton from "../../objects/MenuButton";
 import { persistentData } from "../../objects/PersistantData";
+import { RandomSoundPlayer } from "../../objects/RandomSoundPlayer";
 import { checkTransformsAlmostEqual, DegreesToRadians, getScreenCenter, getScreenDimensions, Transform } from "../../objects/Tools";
 import { PlayerDataHandler } from "./PlayerDataHandler";
 import PlayerScene from "./PlayerScene";
@@ -34,6 +35,8 @@ export abstract class PlayerCardHand
 
     cardBasePositions: Transform[] = [];
 
+    randomCardSlideSoundPlayer: RandomSoundPlayer | null = null;
+
     constructor(scene: PlayerScene) {
         super(scene);
         this.scene = scene;
@@ -55,6 +58,13 @@ export abstract class PlayerCardHand
         this.cardBasePositions.push(this.tablePosition);
         this.cardBasePositions.push(this.handBasePosition);
         this.cardBasePositions.push(this.pickUpAndPlaceBasePosition);
+    }
+
+    public static preload(scene: Phaser.Scene) {
+
+        // load audio card slide
+        scene.load.audio('cardSlide1', 'assets/sounds/cards/cardSlide1.mp3');
+        scene.load.audio('cardSlide2', 'assets/sounds/cards/cardSlide2.mp3');
     }
 
     // ------------------------------------ Data ------------------------------------
@@ -119,6 +129,7 @@ export abstract class PlayerCardHand
                 }
             });
             if (this.cardsInHand().length < playerData.pickUpTo) {
+                this.playRandomCardSlideSound();
                 this.setCardsToPickUp(playerData.pickUpFaceDownCardIds, false, 0);
             }
         })();
@@ -133,6 +144,7 @@ export abstract class PlayerCardHand
                 }
             });
             if (this.cardsInHand().length < playerData.pickUpTo) {
+                this.playRandomCardSlideSound();
                 this.setCardsToPickUp(playerData.pickUpFaceUpCardIds, true, 1000);
             }
         })();
@@ -328,6 +340,13 @@ export abstract class PlayerCardHand
         this.turnIndicator.setDepth(-100);
         this.turnIndicator.setVisible(true);
         this.scene.add.existing(this.turnIndicator);
+
+        // random sound player
+        this.randomCardSlideSoundPlayer = new RandomSoundPlayer(this.scene, ['cardSlide1', 'cardSlide2']);
+    }
+
+    playRandomCardSlideSound() {
+        this.randomCardSlideSoundPlayer?.playRandomSound();
     }
 
     setCardsToPickUp(cardIds: number[], faceUp: boolean, order: number) {
@@ -335,6 +354,7 @@ export abstract class PlayerCardHand
         cardIds.forEach((cardId, i) => {
             const card = this.cards.getCard(cardId);
             if (!card) throw new Error('card not found');
+
             card.order = order + i;
             card.setFaceUp(faceUp);
             card.canTakeFromTable = true;
@@ -396,6 +416,8 @@ export abstract class PlayerCardHand
 
     setCardInHand(card: CardContainer) {
         if (!card.inUserHand) {
+            this.playRandomCardSlideSound();
+
             card.timeInHand = Date.now();
             card.inUserHand = true;
         }
@@ -476,6 +498,7 @@ export abstract class PlayerCardHand
         card.canTakeFromTable = false;
         card.cardBackOnTable = true;
         this.sendData();
+        this.playRandomCardSlideSound();
     }
 
     update(time: number, delta: number) {

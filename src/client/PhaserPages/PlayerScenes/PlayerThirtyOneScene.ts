@@ -1,4 +1,5 @@
 import { Cards } from "../objects/Cards";
+import { PlayerCardHand } from "./playerObjects/PlayerCardHand";
 import { ThirtyOneCardHand } from "./playerObjects/playerCardHands/ThirtyOneCardHand";
 import PlayerScene from "./playerObjects/PlayerScene";
 
@@ -15,6 +16,7 @@ export default class PlayerThirtyOneScene extends PlayerScene {
     preload() {
         super.preload();
         Cards.preload(this);
+        PlayerCardHand.preload(this);
     }
 
     create() {
