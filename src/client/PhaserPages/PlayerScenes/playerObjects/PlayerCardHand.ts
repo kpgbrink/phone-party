@@ -37,6 +37,8 @@ export abstract class PlayerCardHand
 
     randomCardSlideSoundPlayer: RandomSoundPlayer | null = null;
 
+    lastBuzzedTurn: number | null = null;
+
     constructor(scene: PlayerScene) {
         super(scene);
         this.scene = scene;
@@ -217,13 +219,32 @@ export abstract class PlayerCardHand
     }
 
     updateTurnIndicator(gameData: Partial<CardGameDataType> | null) {
-        if (!gameData) return;
-        if (gameData.playerTurnId === undefined) return;
-        console.log('show turn indicator', gameData.playerTurnId, persistentData.myUserId);
-        if (gameData.playerTurnId === persistentData.myUserId && gameData.waitingForDeal === false) {
+        if (!gameData || gameData.turn === undefined) return;
+
+        const isMyTurn = gameData.playerTurnId === persistentData.myUserId;
+        const isNewTurn = this.lastBuzzedTurn !== gameData.turn;
+
+        if (isMyTurn && isNewTurn) {
+            this.vibratePhone();
+            this.lastBuzzedTurn = gameData.turn;
+        }
+
+        if (isMyTurn && gameData.waitingForDeal === false) {
             this.showTurnIndicator(true);
         } else {
             this.showTurnIndicator(false);
+        }
+    }
+
+    vibratePhone() {
+        // Logic to vibrate the phone
+        console.log("Phone vibrated for turn: " + this.lastBuzzedTurn);
+        // Check if the Vibration API is supported
+        if ("vibrate" in navigator) {
+            navigator.vibrate(1);
+        } else {
+            // Handle the absence of Vibration API (e.g., log a message or ignore)
+            console.log("Vibration API not supported on this device.");
         }
     }
 

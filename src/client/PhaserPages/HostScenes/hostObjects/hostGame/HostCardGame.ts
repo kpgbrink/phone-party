@@ -24,7 +24,6 @@ export abstract class HostCardGame<
     shufflingAmount: ValueWithDefault<number> = new ValueWithDefault(4);
 
     dealAmount: number = 10;
-    turn: number = 0;
 
     cardInHandTransform: ValueWithDefault<Transform> = new ValueWithDefault({ x: 0, y: 0, rotation: 0, scale: 0.5 });
 
@@ -208,13 +207,18 @@ export abstract class HostCardGame<
     }
 
     setNextPlayerTurn() {
-        this.turn++;
+        this.gameData.turn++;
         if (this.gameData.playerTurnId === null) {
             this.gameData.playerTurnId = this.getNextPlayerId(this.getDealer().user.id);
+            // move the player indicator to the player who's turn it is
+            this.movePlayerTurnIndicatorToPlayer();
             this.sendGameDataToAll();
             return;
         }
         this.gameData.playerTurnId = this.getNextPlayerId(this.gameData.playerTurnId);
+        // move the player indicator to the player who's turn it is
+        this.movePlayerTurnIndicatorToPlayer();
+
         this.sendGameDataToAll();
     }
 

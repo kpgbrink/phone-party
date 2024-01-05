@@ -125,8 +125,5 @@ export class ThirtyOneGamePlayerTurn extends HostGameState<ThirtyOnePlayerCardHa
         if (this.hostGame.gameData.playerTurnId === null) throw new Error("No current player turn id");
 
         this.hostGame.sendData(this.hostGame.gameData.playerTurnId);
-
-        // move the player indicator to the player who's turn it is
-        this.hostGame.movePlayerTurnIndicatorToPlayer();
     }
 }
