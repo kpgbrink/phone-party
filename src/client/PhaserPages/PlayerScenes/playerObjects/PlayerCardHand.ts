@@ -82,21 +82,6 @@ export abstract class PlayerCardHand
         this.updatePickUpCards(playerData);
     }
 
-    updateTurnIndicator(gameData: Partial<CardGameDataType> | null) {
-        if (!gameData) return;
-        if (gameData.playerTurnId === undefined) return;
-        console.log('show turn indicator', gameData.playerTurnId, persistentData.myUserId);
-        if (gameData.playerTurnId === persistentData.myUserId && gameData.waitingForDeal === false) {
-            this.showTurnIndicator(true);
-        } else {
-            this.showTurnIndicator(false);
-        }
-    }
-
-    showTurnIndicator(showTurnIndicator: boolean) {
-        this.turnIndicator?.setVisible(showTurnIndicator);
-    }
-
     updatePickUpCards(playerData: Partial<PlayerCardHandDataType>) {
         if (playerData.pickUpFaceUpCardIds === undefined) {
             // remove all pickUpFaceUpCards
@@ -217,6 +202,21 @@ export abstract class PlayerCardHand
         console.log('on game data received', gameData);
 
         this.updateTurnIndicator(gameData);
+    }
+
+    updateTurnIndicator(gameData: Partial<CardGameDataType> | null) {
+        if (!gameData) return;
+        if (gameData.playerTurnId === undefined) return;
+        console.log('show turn indicator', gameData.playerTurnId, persistentData.myUserId);
+        if (gameData.playerTurnId === persistentData.myUserId && gameData.waitingForDeal === false) {
+            this.showTurnIndicator(true);
+        } else {
+            this.showTurnIndicator(false);
+        }
+    }
+
+    showTurnIndicator(showTurnIndicator: boolean) {
+        this.turnIndicator?.setVisible(showTurnIndicator);
     }
 
     updateDealing(gameData: Partial<CardGameDataType>) {
